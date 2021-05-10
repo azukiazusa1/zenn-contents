@@ -1,0 +1,16 @@
+title: "【Svelte + TypeScript + tailwindcss】本検索サイト チュートリアル"
+summary: |-
+  この本はSvelte + TypeScript + tailwindcssで本検索サイトを作成します。
+
+  Svelteを使ってアプリケーションを作成1から作成することができます。
+  以下のことが学べます。
+
+  - Svelteの基礎文法
+  - Svelteのルーティング
+  - Svelteのストア
+
+  HTML・CSS・JavaScriptの基礎的な理解がある人が対象です。
+topics: ["javascript", "typescript", "tailwindcss", "svelte"]
+published: true
+price: 0
+toc_depth: 2
