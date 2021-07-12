@@ -1,0 +1,29 @@
+{
+  "name": "zenn-contents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "textlint": "^12.0.2",
+    "textlint-rule-preset-ja-spacing": "^2.1.3",
+    "textlint-rule-preset-ja-technical-writing": "^7.0.0",
+    "zenn-cli": "^0.1.91"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preview": "npx zenn preview --port 3333",
+    "new:article": "npx zenn new:article",
+    "textlint": "textlint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azukiazusa1/zenn-contents.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azukiazusa1/zenn-contents/issues"
+  },
+  "homepage": "https://github.com/azukiazusa1/zenn-contents#readme"
+}
