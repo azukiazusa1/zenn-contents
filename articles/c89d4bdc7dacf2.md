@@ -1,6 +1,6 @@
 ---
 title: "JSDocで型を定義してTypeScriptの恩恵を受ける"
-emoji: "🤓"
+emoji: "👯‍♀️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ['javascript', 'typescript', 'jsdoc']
 published: false
