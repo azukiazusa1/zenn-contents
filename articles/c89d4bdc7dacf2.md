@@ -3,7 +3,7 @@ title: "JSDocで型を定義してTypeScriptの恩恵を受ける"
 emoji: "👯‍♀️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ['javascript', 'typescript', 'jsdoc']
-published: false
+published: true
 ---
 
 普段からTypeScriptで開発されている方ならば、TypeScriptの恩恵を十分に堪能されていることと思います。
