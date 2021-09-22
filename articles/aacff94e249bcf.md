@@ -110,7 +110,7 @@ App.vueも、以下のように空っぽにします。
 
 ```html:src/App/vue
 <template>
-  <router-view><router-view>
+  <router-view></router-view>
 </template>
 
 <script lang="ts">
@@ -240,7 +240,7 @@ const state = reactive<TodoState>({
 })
 
 // ③
-intitializeTodo(todo: Params) {
+const intitializeTodo = (todo: Params) => {
     const date = new Date()
     return {
       id: date.getTime(),
@@ -291,7 +291,7 @@ const todoStore: TodoStore = {
 export default todoStore
 
 // ⑧
-export const key: InjectionKey<TodoStore> = Symbol('todo')
+export const todoKey: InjectionKey<TodoStore> = Symbol('todo')
 ```
 
 ①まだ永続化の処理を実装していないので、とりあえずモックとしてデータを用意しています。これは後ほど削除して本来の実装と取り替えます。
@@ -315,23 +315,23 @@ export const key: InjectionKey<TodoStore> = Symbol('todo')
 作成したストアをグローバルに利用できるように、ルートコンポーネントにprovideします。
 App.vueに次のように追記します。
 
-```diff:src/App.vue
-<template>
-  <router-view><router-view>
-</template>
+```diff vue:src/App.vue
+ <template>
+   <router-view></router-view>
+ </template>
 
-<script lang="ts">
--- import { defineComponent } from 'vue'
-++ import { defineComponent, provide } from 'vue'
-++ import TodoStore, { todoKey } from '@/store/todo'
+ <script lang="ts">
+- import { defineComponent } from 'vue'
++ import { defineComponent, provide } from 'vue'
++ import TodoStore, { todoKey } from '@/store/todo'
 
-export default defineComponent({
-  name: 'App',
-++  setup() {
-++     provide(todoKey, TodoStore)
-++  },
-})
-</script>
+ export default defineComponent({
+   name: 'App',
++  setup() {
++     provide(todoKey, TodoStore)
++  },
+ })
+ </script>
 ```
 
 先程作成したストアをグローバルモジュールから、キーとストアをインポートします。`setup()`関数内で、`provide()`メソッドを呼び出します。このメソッドは第一引数にストアのキーを、第2引数に注入したいバリューを受け取ります。
@@ -348,17 +348,17 @@ touch src/views/todos.vue
 ## ルーティングに追加
 ルーティングに追加しましょう。`src/router/index.ts`を修正します。
 
-```diff:src/views/todos.vue
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-++ import Todos from '@/views/todos.vue'
+```diff typescript:src/router/index.ts
+ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
++ import Todos from '@/views/todos.vue'
 
-const routes: Array<RouteRecordRaw> = [
-++  {
-++    path: '/',
-++    name: 'Todos',
-++    component: Todos,
-++  },
-]
+ const routes: Array<RouteRecordRaw> = [
++  {
++    path: '/',
++    name: 'Todos',
++    component: Todos,
++  },
+ ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -462,70 +462,70 @@ touch src/views/AddTodo.vue
 
 ルーティングに追加します。`src/router/index.ts`を修正します。
 
-```diff:src/views/AddTodo.vue
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Todos from '@/views/todos.vue'
-++ import AddTodo from '@/views/AddTodo.vue'
+```diff ts:src/router/index.ts
+ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+ import Todos from '@/views/todos.vue'
++ import AddTodo from '@/views/AddTodo.vue'
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Todos',
-    component: Todos,
-  },
-++   {
-++    path: '/new',
-++    name: 'AddTodo',
-++    component: AddTodo,
-++  },
-]
+ const routes: Array<RouteRecordRaw> = [
+   {
+     path: '/',
+     name: 'Todos',
+     component: Todos,
+   },
++   {
++    path: '/new',
++    name: 'AddTodo',
++    component: AddTodo,
++  },
+ ]
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-})
+ const router = createRouter({
+   history: createWebHistory(process.env.BASE_URL),
+   routes,
+ })
 
-export default router
+ export default router
 ```
 
 トップページから新規作成ページへ遷移できるようにしておきましょう。
 リンクに使うコンポーネントは`router-link`です。`to`に遷移先を指定します。
 
-```diff::src/views/todo.vue
-<template>
-  <h2>TODO一覧</h2>
-  <ul>
-    <li v-for="todo in todoStore.state.todos" :key="todo.id">
-      {{ todo.title }}
-    </li>
-  </ul>
-++  <router-link to="/new">新規作成</router-link>
-</template>
+```diff vue:src/views/todo.vue
+ <template>
+   <h2>TODO一覧</h2>
+   <ul>
+     <li v-for="todo in todoStore.state.todos" :key="todo.id">
+       {{ todo.title }}
+     </li>
+   </ul>
++  <router-link to="/new">新規作成</router-link>
+ </template>
 
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
-import { todoKey } from '@/store/todo'
+ <script lang="ts">
+ import { defineComponent, inject } from 'vue'
+ import { todoKey } from '@/store/todo'
 
-export default defineComponent({
-  setup() {
-    const todoStore = inject(todoKey)
-    if (!todoStore) {
-      throw new Error('todoStore is not provided')
-    }
+ export default defineComponent({
+   setup() {
+     const todoStore = inject(todoKey)
+     if (!todoStore) {
+       throw new Error('todoStore is not provided')
+     }
 
-    return {
-      todoStore,
-    }
-  },
-})
-</script>
+     return {
+       todoStore,
+     }
+   },
+ })
+ </script>
 ```
 
 ## TODO作成ページの実装
 
 実装は以下のようになりました。
 
-```html:src/views/AddTodo.vue
+```vue:src/views/AddTodo.vue
 <template>
   <h2>TODOを作成する</h2>
   <form @submit.prevent="onSubmit"> // ①
@@ -925,36 +925,36 @@ touch src/views/EditTodo.vue
 
 さらに、ルーティングに追加します。
 
-```diff:src/router/index.ts
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Todos from '@/views/todos.vue'
-import AddTodo from '@/views/AddTodo.vue'
-++  import EditTodo from '@/views/EditTodo.vue'
+```diff typescript:src/router/index.ts
+ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+ import Todos from '@/views/todos.vue'
+ import AddTodo from '@/views/AddTodo.vue'
++  import EditTodo from '@/views/EditTodo.vue'
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Todos',
-    component: Todos,
-  },
-  {
-    path: '/new',
-    name: 'AddTodo',
-    component: AddTodo,
-  },
-++  {
-++    path: '/edit/:id',
-++    name: 'EtidTodo',
-++    component: EditTodo,
-++  },
-]
+ const routes: Array<RouteRecordRaw> = [
+   {
+     path: '/',
+     name: 'Todos',
+     component: Todos,
+   },
+   {
+     path: '/new',
+     name: 'AddTodo',
+     component: AddTodo,
+   },
++  {
++    path: '/edit/:id',
++    name: 'EtidTodo',
++    component: EditTodo,
++  },
+ ]
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-})
+ const router = createRouter({
+   history: createWebHistory(process.env.BASE_URL),
+   routes,
+ })
 
-export default router
+ export default router
 ```
 
 コロン`:`を用いてルートを動的にマッチングさせることができます。例えば、`/edit/1`・`/edit/3`のようなルートにマッチングします。
@@ -1255,35 +1255,35 @@ export const todoKey: InjectionKey<TodoStore> = Symbol('todoKey')
 
 レポジトリからすべてのTODOを取得する`fetchTodos`と、idからTODOを取得する`fetchTodo`も追加しました。ストアのインターフェースも更新しておきましょう。
 
-```diff:src/store/types.ts
-import { DeepReadonly } from 'vue'
+```diff typescript:src/store/types.ts
+ import { DeepReadonly } from 'vue'
+ 
+ export type Status = 'waiting' | 'working' | 'completed' | 'pending'
 
-export type Status = 'waiting' | 'working' | 'completed' | 'pending'
+ export interface Todo {
+   id: number
+   title: string
+   description: string
+   status: Status
+   createdAt: Date
+   updatedAt: Date
+ }
 
-export interface Todo {
-  id: number
-  title: string
-  description: string
-  status: Status
-  createdAt: Date
-  updatedAt: Date
-}
+ export type Params = Pick<Todo, 'title' | 'description' | 'status'>
 
-export type Params = Pick<Todo, 'title' | 'description' | 'status'>
+ export interface TodoState {
+   todos: Todo[]
+ }
 
-export interface TodoState {
-  todos: Todo[]
-}
-
-export interface TodoStore {
-  state: DeepReadonly<TodoState>
-++  fetchTodos: () => void
-++  fetchTodo: (id: number) => void
-  getTodo: (id: number) => Todo
-  addTodo: (todo: Partial<Todo>) => void
-  updateTodo: (id: number, todo: Todo) => void
-  deleteTodo: (id: number) => void
-}
+ export interface TodoStore {
+   state: DeepReadonly<TodoState>
++  fetchTodos: () => void
++  fetchTodo: (id: number) => void
+   getTodo: (id: number) => Todo
+   addTodo: (todo: Partial<Todo>) => void
+   updateTodo: (id: number, todo: Todo) => void
+   deleteTodo: (id: number) => void
+ }
 ```
 
 TODOをレポジトリに保存して取得する処理までやりました。
@@ -1460,25 +1460,25 @@ export default defineComponent({
 
 実際にはローカルストレージから取得する処理はすぐに終わってしますので、`fallback`スロットが表示されることを確認したい場合には`todoClient`の処理を少し修正してあえて3秒送らせて取得させてみましょう。
 
-```diff:src/todoClient/index.ts
-import { Todo } from '@/store/todo/types'
-import { TodoClientInterface } from './types'
+```diff typescript:src/todoClient/index.ts
+ import { Todo } from '@/store/todo/types'
+ import { TodoClientInterface } from './types'
 
-export class TodoClient implements TodoClientInterface {
--- getAll()
-++  async getAll() {
-++    await new Promise((resolve) => setTimeout(resolve, 3000))
-    return Promise.resolve(
-      Object.keys(localStorage)
-        .filter((key) => !isNaN(Number(key)))
-        .map((key) => {
-          const todo = JSON.parse(localStorage.getItem(key) as string) as Todo
-          todo.createdAt = new Date(todo.createdAt)
-          todo.updatedAt = new Date(todo.updatedAt)
-          return todo
-        })
-    )
-  }
+ export class TodoClient implements TodoClientInterface {
+- getAll()
++  async getAll() {
++    await new Promise((resolve) => setTimeout(resolve, 3000))
+     return Promise.resolve(
+       Object.keys(localStorage)
+         .filter((key) => !isNaN(Number(key)))
+         .map((key) => {
+           const todo = JSON.parse(localStorage.getItem(key) as string) as Todo
+           todo.createdAt = new Date(todo.createdAt)
+           todo.updatedAt = new Date(todo.updatedAt)
+           return todo
+         })
+     )
+   }
 ```
 
 Promiseが解決するまでの間、Loading...と描画されます。
@@ -1652,7 +1652,7 @@ export class MockTodoClient implements TodoClientInterface {
 
 ```ts:src/clients/RepositoryFactory.ts
 import { TodoClientInterface } from './TodoClient/types'
-import { TodoClient } from '@/clients/TodoClient'
+import { TodoCgiient } from '@/clients/TodoClient'
 import { MockTodoClient } from '@/clients/TodoClient/mock'
 
 export const TODOS = 'todos'
