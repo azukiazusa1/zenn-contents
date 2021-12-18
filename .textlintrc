@@ -1,24 +1,28 @@
 {
   "plugins": {
     "@textlint/markdown": {
-      "extensions": [".md"]
+      "extensions": [
+        ".md"
+      ]
     }
   },
   "rules": {
     "preset-ja-technical-writing": {
-        "no-exclamation-question-mark": {
+      "no-exclamation-question-mark": {
         "allowFullWidthExclamation": true,
-        "allowFullWidthQuestion": true,
+        "allowFullWidthQuestion": true
       },
       "no-doubled-joshi": {
-         "strict": false,
-         "allow": ["か"], // 助詞のうち「か」は複数回の出現を許す(e.g.: するかどうか)
+        "strict": false,
+        "allow": [
+          "か"
+        ]
       }
     },
     "preset-ja-spacing": {
       "ja-space-between-half-and-full-width": {
-        space: "always",
-        exceptPunctuation: true,
+        "space": "always",
+        "exceptPunctuation": true
       },
       "ja-space-around-code": {
         "before": true,
@@ -26,8 +30,14 @@
       }
     },
     "ja-technical-writing/ja-no-mixed-period": {
-      "allowPeriodMarks": [":"],
+      "allowPeriodMarks": [
+        ":"
+      ]
     },
-    "ja-technical-writing/sentence-length": false //100文字数制限の無効化
+    "ja-technical-writing/sentence-length": false,
+    "preset-bengo4": true
+  },
+  "@proofdict/proofdict": {
+    "dictURL": "https://azu.github.io/proof-dictionary/"
   }
 }
