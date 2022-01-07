@@ -323,7 +323,7 @@ const useFetch = <T>(url: string | Ref<string>) => {
 }
 ```
 
-これは、コンポーネント内で Composables 関数を利用する時にリアクティブ性を失わないようにするためです。前述のとおり `reactive` は分割代入をするとリアクティブ性が失われてしまいます。
+これは、コンポーネント内で Composables 関数を利用するときにリアクティブ性を失わないようにするためです。前述のとおり `reactive` は分割代入をするとリアクティブ性が失われてしまいます。
 
 ```ts
 const { data, loading, error } = useFetch('/api/users')
