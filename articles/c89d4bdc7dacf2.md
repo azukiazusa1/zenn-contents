@@ -6,24 +6,24 @@ topics: ['javascript', 'typescript', 'jsdoc']
 published: true
 ---
 
-普段からTypeScriptで開発されている方ならば、TypeScriptの恩恵を十分に堪能されていることと思います。
+普段から TypeScript で開発されているほうならば、TypeScript の恩恵を十分に堪能されていることと思います。
 
-特に私はVS Codeのインテリセンスには頼りっぱなしでこれがなければまともにコーディングができない体になってしまいました。
+特に私は VS Code のインテリセンスには頼りっぱなしでこれがなければまともにコーディングができない体になってしまいました。
 
-しかし時には、TypeScriptという概念が存在しない退屈な世界で開発を行わなけらばならない状況はあるでしょう。私はもはやキーボードでタイピングすることすらままなりません。
+しかし時には、TypeScript という概念が存在しない退屈な世界で開発を行わなけらばならない状況はあるでしょう。私はもはやキーボードでタイピングすることすらままなりません。
 
-そんなJavaScriptしか利用できない状況で代替手段となるのが、JSDocです。JSDocのアノテーションによって型を付与することによって最低限の支援を受けることができます。
+そんな JavaScript しか利用できない状況で代替手段となるのが、JSDoc です。JSDoc のアノテーションによって型を付与することによって最低限の支援を受けることができます。
 
 # @Type
 
-`@Type`タグを使用すると、TypeScriptで型をつけるときと同じように型を宣言することができます。
+`@Type` タグを使用すると、TypeScript で型をつけるときと同じように型を宣言できます。
 
 ```js
 /** @type {number}  年齢*/
 let age;
 ```
 
-マウスオーバーをするとJSDocに記載した情報を表示してくれますし、もちろんインテリセンスもしっかりと効いてくれます。
+マウスオーバーをすると JSDoc に記載した情報を表示してくれますし、もちろんインテリセンスもしっかりと効いてくれます。
 
 
 ![](https://storage.googleapis.com/zenn-user-upload/af2b40c24e7bd9b045bc315f.png)
@@ -32,7 +32,7 @@ let age;
 
 ## 基本的な型
 
-TypeScriptに用意されている基本的な型はほとんどサポートされています。
+TypeScript に用意されている基本的な型はほとんどサポートされています。
 
 ```js
 /** @type {string} */
@@ -70,7 +70,7 @@ let obj
 
 ## Union型
 
-Union型も定義することができます。その場合、型ガードによって絞り込みをすることもできます。
+Union 型も定義できます。その場合、型ガードによって絞り込みをすることもできます。
 
 ```js
 
@@ -91,8 +91,8 @@ let color
 
 ## Enum
 
-@enumでEnum(列挙型)を表現することができますが、TypeScriptの提供するEnumとは異なります。
-まず、JSDocのEnumはとてもシンプルです。
+@enum で Enum(列挙型）を表現できますが、TypeScript の提供する Enum とは異なります。
+まず、JSDoc の Enum はとてもシンプルです。
 
 ```js
 /** @enum {number} */
@@ -108,7 +108,7 @@ color.blue
 ![](https://storage.googleapis.com/zenn-user-upload/62c2855fb4e39f534aaa3b3a.png)
 ![](https://storage.googleapis.com/zenn-user-upload/6a34967a81ac5559e029ba66.png)
 
-また、任意の型を持つこともできます。
+また任意の型を持つこともできます。
 
 ```js
 /** @enum {(n1: number, n2: number) => number)} */
@@ -124,7 +124,7 @@ MathFuncs.add
 
 ## インデックスシグネチャ
 
-インデックスシグネチャ(`{ [x: string]: number }`)ど同等の型も定義できます。
+インデックスシグネチャ（`{ [x: string]: number }`)と同等の型も定義できます。
 
 ```js
 /**
@@ -138,7 +138,7 @@ stringToNumber['a'] = 'h'
 
 ## this
 
-`@this`によって、コンテキスト型`this`の型を推測できない場合にも明示的に型を指定することができます。
+`@this` によって、コンテキスト型 `this` の型を推測できない場合にも明示的に型を指定できます。
 
 ```js
 const button = document.getElementById('button')
@@ -157,7 +157,7 @@ function onClick() {
 
 ## キャスト
 
-丸括弧で囲まれた式の前に@typeタグを追加することで、型を他の型にキャストすることができます。
+丸括弧で囲まれた式の前に@type タグを追加することで、型を他の型にキャストできます。
 
 ```js
 /**
@@ -169,7 +169,7 @@ function onClick() {
 
 ## インポート型
 
-他ファイルの型宣言から、インポートして使うことができます。これはTypeScript固有のもので、JSDocの標準ではありません。
+他ファイルの型宣言から、インポートして使うことができます。これは TypeScript 固有のもので、JSDoc の標準ではありません。
 
 ```ts
 // User.ts
@@ -197,7 +197,7 @@ let instance
 
 # @paramと@returns
 
-`@type`と同じ構文で、関数の引数(`@param`)と返り値(`@returns`)に型をつけることができます。
+`@type` と同じ構文で、関数の引数（`@param`)と返り値（`@returns`)に型をつけることができます。
 
 ```js
 /**
@@ -220,9 +220,9 @@ const calc = (a, b, c, d = 1) => {
 
 ## @typedef
 
-Object型は複雑になりやすく、再利用するときに同じような記述をするのは冗長です。
+Object 型は複雑になりやすく、再利用するときに同じような記述をするのは冗長です。
 
-TypeScriptで`interface`や`type`を定義するのと同じように、`@typedef`タグで型を定義することができます。
+TypeScript で `interface` や `type` を定義するのと同じように、`@typedef` タグで型を定義できます。
 
 ```js
 /**
@@ -245,7 +245,7 @@ let user2
 
 ## @param
 
-`@param`を使うと、一度限りの方を指定することができます。プロパティはネストした表現をします。
+`@param` を使うと、一度限りの方を指定できます。プロパティはネストした表現をします。
 
 ```js
 /**
@@ -261,7 +261,7 @@ const fn = ({ name, age }) => {
 
 ## @callback
 
-`@callback`は、オブジェクトではなく関数の型を定義します。
+`@callback` は、オブジェクトではなく関数の型を定義します。
 
 ```js
 /**
@@ -284,7 +284,7 @@ const sub = (num1, num2) => {
 
 # ジェネリクス
 
-`@template`を使うと、ジェネリクスを表現することができます。
+`@template` を使うと、ジェネリクスを表現できます。
 
 ```js
 /**
@@ -305,11 +305,11 @@ const c = test({});
 
 # @ts-check
 
-JSDocによって型を手に入れ快適な生活を送ることができましたが、一つだけ重大な問題点が存在します。
+JSDoc によって型を手に入れ快適な生活を送ることができましたが、1 つだけ重大な問題点が存在します。
 
-JSDocによって得られたものは所詮型ヒントによる推測にすぎず、実際はただのJavaScriptファイルであることを忘れてはいけません。
+JSDoc によって得られたものはしょせん型ヒントによる推測にすぎず、実際はただの JavaScript ファイルであることを忘れてはいけません。
 
-以下のように、JSDocで宣言した型以外を代入してもなにも警告をしてくれません。
+以下のように、JSDoc で宣言した型以外を代入してもなにも警告をしてくれません。
 
 ```js
 /** @type {number} */
@@ -322,7 +322,7 @@ num = [1, 2, 3]
 num.toFixed() // TypeError: num.toFixed is not a function
 ```
 
-JavaScriptファイルにおいて警告を有効にしたい場合には、最初の行に`@ts-check`を使用します。
+JavaScript ファイルにおいて警告を有効にしたい場合には、最初の行に `@ts-check` を使用します。
 
 ```js
 // @ts-check
@@ -334,11 +334,11 @@ num = '10' // Type 'string' is not assignable to type 'number'.
 num = [1, 2, 3] // type 'number[]' is not assignable to type 'number'
 ```
 
-もし多くのファイルに対して`@ts-check`を適用させたい場合には、代わりに`tsconfig.json`を配置するようにしましょう。
+もし多くのファイルに対して `@ts-check` を適用させたい場合には、代わりに `tsconfig.json` を配置するようにしましょう。
 
 ## クラスのアクセス修飾子
 
-JSDocによって、`public`・`private`・`protected`・`readonly`のようなアクセス修飾子を付与することができます。
+JSDoc によって、`public`・`private`・`protected`・`readonly` のようなアクセス修飾子を付与できます。
 
 ```js
 // @ts-check
