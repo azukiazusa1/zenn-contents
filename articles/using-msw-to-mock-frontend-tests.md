@@ -105,6 +105,12 @@ msw ではそのようなそのような機能はデフォルトでは備わっ�
 
 ただし、機能の実際の振る舞いをベースにテストを記述しているような場合には大きな問題にはならないでしょう。
 
+※追記
+
+msw を使った引数の検査について以下の素晴らしい記事が書かれています！
+
+https://zenn.dev/takepepe/articles/jest-msw-mocking
+
 ## 実際のコード例
 
 ### 依存パッケージのインストール
@@ -218,7 +224,7 @@ export default { get };
 import { rest } from "msw";
 import users from "@/mocks/api/users";
 
-const const handlers = [rest.get("/api/users", users.get)];
+export const handlers = [rest.get("/api/users", users.get)];
 ```
 
 さらに、ブラウザ・Nodejsそれぞれの環境でサービスワーカーをスタートするためのファイルを作成します。テストで使用するのは　Nodejs 向けのコードです。
