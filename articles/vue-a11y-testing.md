@@ -62,8 +62,7 @@ npm install -D axe-core vue-axe@next
 
 Vue Axe を開発中のみ有効化するために `main.ts` を編集します。
 
-```ts
-// src/main.ts
+```ts:src/main.ts
 import { createApp, h, Fragment, App as IApp } from "vue";
 import App from "./App.vue";
 
@@ -87,15 +86,13 @@ setup().then((app) => app.mount("#app"));
 
 TypeScript を使用しているのなら型定義ファイルを追加しておく必要があるでしょう。
 
-```ts
-// vue-axe.d.ts
+```ts:vue-axe.d.ts
 declare module "vue-axe";
 ```
 
 さらに `vite.config.js` ファイルの `optimizeDeps` に `axe-core` を追加します。
 
-```js
-// vite.config.js
+```js:vite.config.js
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -123,8 +120,7 @@ npm run dev
 
 さらに、この状態で試しに `App.vue` の `<img>` タグの `alt` 属性を取り除いてみましょう。
 
-```diff
-// src/App.vue
+```diff:src/App.vue
  <template>
    <header>
      <img
@@ -166,7 +162,7 @@ npm i --save--dev @storybook/addon-a11y
 
 `.storybook/main.js` にインストールしたアドオンを追加します。
 
-```js
+```js:.storybook/main.js
 module.exports = {
   addons: ['@storybook/addon-a11y'],
 };
@@ -174,8 +170,7 @@ module.exports = {
 
 アクセシビリティ上問題があるボタンを試しに作成します。簡単に Props から配色を変更できるようにしています。
 
-```vue
-// components/BadButton.vue
+```vue:components/BadButton.vue
 <script lang="ts" setup>
 interface Props {
   color: "primary" | "danger";
@@ -214,8 +209,7 @@ defineProps<Props>();
 
 作成したボタンに対応するストーリーも作成しましょう。Props の color で `praimary` を選択した場合と `danger` を選択した場合のストーリーを作成します。
 
-```ts
-// components/BadButton.stories.ts
+```ts:components/BadButton.stories.ts
 import type { Story, Meta } from "@storybook/vue3";
 import BadButton from "./BadButton.vue";
 
@@ -272,8 +266,7 @@ npm install --save-dev @types/jest-axe
 
 今回もアクセシビリティ上問題があるコンポーネントを作成します。
 
-```vue
-// components/BadInput.vue
+```vue:components/BadInput.vue
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
@@ -297,8 +290,7 @@ defineProps<Props>();
 
 作成したコンポーネントに対するテストを作成します。
 
-```ts
-// components/BadInput.spec.ts
+```ts:components/BadInput.spec.ts
 import { axe, toHaveNoViolations } from "jest-axe";
 import { render } from "@testing-library/vue";
 import BadInput from "./BadInput.vue";
