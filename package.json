@@ -17,7 +17,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "preview": "npx zenn preview --port 3333",
     "new:article": "npx zenn new:article",
-    "textlint": "textlint"
+    "textlint": "textlint",
+    "textlint:fix": "textlint --fix"
   },
   "repository": {
     "type": "git",
