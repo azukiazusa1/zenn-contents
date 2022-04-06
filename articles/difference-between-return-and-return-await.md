@@ -200,8 +200,8 @@ const main = async () => {
   console.log("function foo finished");
 };
 
-main();
 tick();
+main();
 ```
 
 結果は次のとおりです。
