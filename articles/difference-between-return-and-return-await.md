@@ -188,7 +188,7 @@ const tick = () => {
 
 ```js
 const foo = async () => {
-  return Promise.resolve(42);
+  return await Promise.resolve(42);
 };
 
 const tick = () => {
