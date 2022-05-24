@@ -18,7 +18,7 @@ Playwright のコンポーネントテスティングの特徴と使い方を見
 
 Tesing Library と比較してあげられる Playwright のメリットとして、**実際のブラウザ上でコンポーネントテストを実行できる**という点があります。通常 Testing Library は Node.js 上で実行されており [jsdom](https://github.com/jsdom/jsdom) により DOM を再現しています。
 
-Playwright は実際のブラウザを外から操作するため、`jsdom` では発見できないブラウザ特有の問題を自動テストで発見できるメリットがあります。また `viewport` の指定や `prefers-colors-scheme` のエミュレートも可能なので、例えばモバイルでのみ要素が表示されることをテストすることもできます。
+Playwright は実際のブラウザを外から操作するため、`jsdom` では発見できないブラウザ特有の問題を自動テストで発見できるメリットがあります。また `viewport` の指定や `prefers-colors-scheme` のエミュレートも可能なので、例えばモバイルでのみ要素が表示されることをテストできます。
 
 ## テストを書いてみる
 
