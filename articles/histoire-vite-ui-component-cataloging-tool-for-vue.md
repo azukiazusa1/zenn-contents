@@ -189,7 +189,7 @@ import AppButton from "./AppButton.vue";
 
 デフォルトでは Controls タブで Props の状態を変更できますが、それ以外の状態をコンポーネントに渡して操作したいこともあるでしょう。例えば、次の例ではボタンコンポーネントのスロットに渡す文字列を状態として保持するようにしています。
 
-```vue
+```vue:AppButton.story.vue
 <script lang="ts" setup>
 import { ref } from "vue";
 import AppButton from "./AppButton.vue";
@@ -235,7 +235,7 @@ const label = ref("Hello World");
 
 Histoire の `hstEvent` 関数を使用することでコンポーネントが emit するイベントの一覧を Events タブに表示できます。`hstEvent` は `histoire/client` からインポートする必要があります。
 
-```vue
+```vue:AppButton.story.vue
 <script lang="ts" setup>
 import AppButton from "./AppButton.vue";
 import { hstEvent } from "histoire/client";
@@ -256,7 +256,7 @@ import { hstEvent } from "histoire/client";
 
 トップレベルに `<doc>` タグを追加することでコンポーネントのドキュメントをマークダウン記法で記述できます。デフォルトでは [markdown-it](https://github.com/markdown-it/markdown-it) により描画されますが、[markdown](https://histoire.dev/reference/config.html#markdown) 設定によりカスタマイズ可能です。
 
-```vue
+```vue:AppButton.story.vue
 <script lang="ts" setup>
 import AppButton from "./AppButton.vue";
 </script>
@@ -291,7 +291,7 @@ This is a button.
 
 `<Story>` または `<Variant>` タグに `source` Props を渡すか、`source` スロットを使用することで表示されるソースコードを上書きできます。
 
-```vue
+```vue:AppButton.story.vue
 <script lang="ts" setup>
 import AppButton from "./AppButton.vue";
 </script>
@@ -318,7 +318,7 @@ $ npm i -D @histoire/plugin-screenshot
 
 Histoire の設定ファイル（この記事内では `histoire.config.ts`）においてプラグインを追加します。
 
-```diff
+```diff ts:histoire.config.ts
   // histoire.config.ts
   import { defineConfig } from 'histoire'
 + import { HstScreenshot } from '@histoire/plugin-screenshot'
