@@ -95,7 +95,7 @@ import chunk from "https://deno.land/x/lodash@4.17.15-es/chunk.js";
 console.log(chunk(["a", "b", "c", "d"], 2));
 ```
 
-この方法は書き捨てのスクリプトならば問題ないのですが、大きなプロジェクトになった際に問題が発生します。例えば `lodash` が複数のファイルにおいて import されている場合、バージョンアップのたびにすべてのファイルを修正する必要があります。この問題を解決するために慣例的に `deps.ts` という名前のファイルを作成して依存関係を 1 つにまとめるという方法が使われていました。
+この方法は書き捨てのスクリプトならば問題ないのですが、大きなプロジェクトになった際に問題が発生します。例えば `lodash` が複数のファイルにおいて import されている場合、バージョンアップのたびにすべてのファイルを修正する必要があります。この問題を解決するため、慣例的に `deps.ts` という名前のファイルを作成して依存関係を 1 つにまとめるという方法が使われていました。
 
 https://deno.land/manual/examples/manage_dependencies
 
@@ -146,7 +146,7 @@ $ deno run test.ts --import-map=import_map.json
 
 Next.js のようなファイルベースのルーティングを提供します。例えば `routes/articles/create.tsx` に配置したファイルは `/articles/create` のパスに対応しています。
 
-また`routes/` ディレクトリ中のコードはクライアントに配信されることはありません。クライアント上で動作させたいコードは `islands/` ディレクトリに配置します。
+また `routes/` ディレクトリ中のコードはクライアントに配信されることはありません。クライアント上で動作させたいコードは `islands/` ディレクトリに配置します。
 
 ### `islands/`
 
@@ -219,7 +219,7 @@ export default function Home({ data }: PageProps<Article[]>) { // ③
 
 ```
 
-①：最初の 1 行では `/** @jsx h */` というコメントと `$fresh/runtime.ts` から `h` 関数を import しています。これらは JSX をレンダリングするためのボイラープレートです。React における `import React from 'react'` と似たようなものだと考えてよいでしょう。
+①：最初の 1 行では `/** @jsx h */` コメントと `$fresh/runtime.ts` から `h` 関数を import しています。これらは JSX をレンダリングするためのボイラープレートです。React における `import React from 'react'` と似たようなものだと考えてよいでしょう。
 
 ②：ルートモジュールではカスタムハンドラを作成できます。カスタムハンドラは `handler` という名前で名前付きエクスポートを行う必要があります。
 
@@ -256,7 +256,7 @@ export default function Home({ data }: PageProps<Article[]>) { // ③
 
 [dayjs](https://deno.land/x/dayjs@v1.11.3) は npm でもおなじみの日付操作ライブラリです。
 
-まずは `util/twind.ts` ファイルを作成します。このファイルでは twind の設定を行うとともに、必要な関数を再 export します。
+まずは `util/twind.ts` ファイルを作成します。このファイルでは twind の設定をするとともに、必要な関数を再 export します。
 
 ```ts:utis/twind.ts
 import { IS_BROWSER } from "$fresh/runtime.ts";
@@ -947,7 +947,7 @@ export default function CreateArticlePage() {
 ```
 ![スクリーンショット 2022-06-18 20.50.01](//images.ctfassets.net/in6v9lxmm5c8/2dOmHOuDI4TjGLHwqFYlIZ/6a0cd533540b29e89ae8b906fc885f99/____________________________2022-06-18_20.50.01.png)
 
-続いて `ruotes/articles/create.tsx` でコンテンツを入力できるようにフォームを追加しましょう。Fresh は デフォルトでクライアントの JavaScript は一切使用せずネイティブの `<form>` 要素を利用します。つまり入力中の状態を保持したり、フォームのサブミット後に `e.preventDefault()` を呼び出す必要はありません。
+続いて `ruotes/articles/create.tsx` でコンテンツを入力できるようにフォームを追加しましょう。Fresh はデフォルトでクライアントの JavaScript は一切使用せずネイティブの `<form>` 要素を利用します。つまり入力中の状態を保持したり、フォームのサブミット後に `e.preventDefault()` を呼び出す必要はありません。
 
 ```tsx:routes/articles/create.tsx
 /** @jsx h */
@@ -1125,7 +1125,7 @@ export default function CreateArticlePage({
 }
 ```
 
-`data.title` の値をタイトルの input の初期値として `value` に渡します。また`data.error.title` の値が存在する場合にはエラーメッセージを表示します。コンテンツ入力欄も同様に修正します。
+`data.title` の値をタイトルの input の初期値として `value` に渡します。また `data.error.title` の値が存在する場合にはエラーメッセージを表示します。コンテンツ入力欄も同様に修正します。
 
 それでは実際に試してみましょう。タイトルとコンテンツどちらも未入力の場合、フォームをサブミットした後エラーメッセージが表示されます。
 
