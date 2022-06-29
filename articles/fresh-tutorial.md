@@ -6,9 +6,6 @@ topics: ["fresh", "deno", "twind", "denodeploy", "supabase"]
 published: true
 ---
 
-:::message
-Fresh は現在（2022/06/19）プロダクション環境で使用することは推奨されません
-:::
 
 Fresh は Deno 製の Web フレームワークです。事前のビルドを必要せず、エッジでレンダリングを提供するという特徴があります。また [Islands Architecture](https://jasonformat.com/islands-architecture/) を採用しており、デフォルトではクライアントに JavaScript が配信されることがありません。
 
