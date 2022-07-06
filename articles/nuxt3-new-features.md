@@ -553,7 +553,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
 また `nuxtApp.hook()` はコールバックに渡した関数を以下の指定した Nuxt ライフサイクルで実行することができます。
 
-- app:beforeMounnt
+- app:beforeMount
 - app:created
 - app:mounted
 - app:rendered
