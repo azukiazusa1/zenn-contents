@@ -2,7 +2,7 @@
 title: "pnpm の特徴"
 emoji: "🦁"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: [pnpm]
+topics: [pnpm, javascript, nodejs]
 published: true
 ---
 
