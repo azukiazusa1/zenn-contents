@@ -163,7 +163,7 @@ $ pnpm add body-parser
 `npm`、`yarn`、`Yarn PnP` と比較した pnpm のベンチマークが存在します。この結果を見る限り、確かに pnpm は非常に高速にパッケージをインストールできることがわかります。
 
 | action | cache | lockfile | node_modules | npm | pnpm | Yarn | Yarn PnP |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | 
 | install | | | | 35.3s | 15.7s | 16.7s | 22.9s |
 | install | ✔ | ✔ | ✔ | 1.8s | 1.1s | 2.1s | n/a |
 | install | ✔ | ✔ |  | 10.3s | 4.1s | 6.5s | 1.42 |
