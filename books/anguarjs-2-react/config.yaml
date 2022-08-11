@@ -1,0 +1,20 @@
+title: "AngularJS の公式チュートリアルを React にリプレイスしてみた"
+summary: |-
+  この本は、AngularJS の公式が提供している[チュートリアル](https://docs.angularjs.org/tutorial) を React にリプレイスすることで、フロントエンドのフレームワークの移行作業を体験することを目的としています。この記事内には以下の要素が存在します。
+
+  - Webpack の導入
+  - JavaScript → TypeScript
+  - angular2React を利用した段階的なコンポーネントの置き換え
+  - Jasmine + Karma → Jest + Testing Library + MSW
+  - Protractor → Playwright
+  - angular-animate → React Transition Group, react-flip-toolkit, React Framer Motion,
+  - angular-resource → SWR
+  - angular-route → React Router
+
+  この本で実装したコードの内容は以下のレポジトリを参照してください。
+
+  https://github.com/azukiazusa1/angular-phonecat/tree/master
+topics: ["angularjs", "react", "typescript"]
+published: true
+price: 0 # 有料の場合200〜5000
+# 本に含めるチャプターを順番に並べましょう
