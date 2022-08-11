@@ -14,3 +14,4 @@ topics: ["javascript", "typescript", "tailwindcss", "svelte"]
 published: true
 price: 0
 toc_depth: 2
+allow_override: true
