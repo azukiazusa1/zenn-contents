@@ -53,7 +53,7 @@ if (!roomId) {
 
 ### ストリーム をアップロード
 
-ストリーム をアップロードするために `ReadableStream` インスタンスを作成します。[ReadableStream() コンストラクター](https://developer.mozilla.org/ja/docs/Web/API/ReadableStream/ReadableStream) の `start` メソッドを利用して ストリーム を生成します。
+ストリームをアップロードするために `ReadableStream` インスタンスを作成します。[ReadableStream() コンストラクター](https://developer.mozilla.org/ja/docs/Web/API/ReadableStream/ReadableStream) の `start` メソッドを利用してストリームを生成します。
 
 ```js:static/main.js
 const stream = new ReadableStream({
