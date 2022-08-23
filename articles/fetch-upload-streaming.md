@@ -20,7 +20,7 @@ fetch(`/send?room=${roomId}`, {
 });
 ```
 
-かねてより Fetch API ではレスポンスを `ReadableStream` で取得することはできたのですが、反対にリクエスト時に `body` に `ReadableStream` を渡すことはできませんでした。[Chrome 105](https://blog.chromium.org/2022/08/chrome-105-beta-custom-highlighting.html) から Fetch Upload Streaming が有効となります。
+かねてより Fetch API ではレスポンスを `ReadableStream` で取得できたのですが、反対にリクエスト時に `body` に `ReadableStream` を渡すことはできませんでした。[Chrome 105](https://blog.chromium.org/2022/08/chrome-105-beta-custom-highlighting.html) から Fetch Upload Streaming が有効となります。
 
 :::message
 現時点（2022/08/23）では [Chrome ベータ版](https://www.google.com/chrome/beta/) で Fetch Upload Streaming を試すことができます。
