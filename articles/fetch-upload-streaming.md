@@ -93,7 +93,7 @@ fetch(`/send?room=${roomId}`, {
 
 このような互換性の問題を回避するために `duplex: "half"` をリクエストに必ず設定する必要があるのです。
 
-###　ストリームを読み込む
+### ストリームを読み込む
 
 Fetch API で `res.body` を `ReadableStream` として取得します。
 
