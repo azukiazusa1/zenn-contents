@@ -35,7 +35,7 @@ Hono の特徴としては以下の点が挙げられています。
 
 ### 依存関係ゼロ
 
-Hono は Serviec Worker と Web Standard API に準拠して提供されています。例えばルーティングのハンドラにおいてレスポンスを返却する際には Web API の [Response](https://developer.mozilla.org/ja/docs/Web/API/Response) を返却できます。
+Hono は Service Worker と Web Standard API に準拠して提供されています。例えばルーティングのハンドラにおいてレスポンスを返却する際には Web API の [Response](https://developer.mozilla.org/ja/docs/Web/API/Response) を返却できます。
 
 ```ts
 app.get("/", () => {
