@@ -163,7 +163,11 @@ npm start
 
 ## TODO アプリの作成
 
-それでは Hono を使用して簡単な CRUD 操作を備えた API サーバーを作成してみましょう。`src/todos/api.ts` ファイルを作成します。
+それでは Hono を使用して簡単な CRUD 操作を備えた API サーバーを作成してみましょう。完成形は以下のレポジトリを参照してください。
+
+https://github.com/azukiazusa1/hono-todo-app
+
+まずは `src/todos/api.ts` ファイルを作成します。
 
 ```ts:src/todos/api.ts
 import { Hono } from "hono";
