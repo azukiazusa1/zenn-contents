@@ -22,10 +22,6 @@ fetch(`/send?room=${roomId}`, {
 
 かねてより Fetch API ではレスポンスを `ReadableStream` で取得できたのですが、反対にリクエスト時に `body` に `ReadableStream` を渡すことはできませんでした。[Chrome 105](https://blog.chromium.org/2022/08/chrome-105-beta-custom-highlighting.html) から Fetch Upload Streaming が有効となります。
 
-:::message
-現時点（2022/08/23）では [Chrome ベータ版](https://www.google.com/chrome/beta/) で Fetch Upload Streaming を試すことができます。
-:::
-
 Fetch Upload Streaming を使用すれば、WebSocket のようなリアルタイムなデータのやり取りも `Fetch API` だけで可能となります。今回は `Fetch API` を利用してリアルタイムなチャットアプリを作成してみます。
 
 ![fetch-chat](//images.ctfassets.net/in6v9lxmm5c8/4DWp1ZqYKVbksjMQVPCygc/0b8d20373649396268a51e207dd6bf53/fetch-chat.gif)
