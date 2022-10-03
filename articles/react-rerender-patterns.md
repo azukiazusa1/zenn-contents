@@ -56,7 +56,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/serene-dewdney-g3rnqg?fontsize=14&hidenavigation=1&theme=dark)
+[デモ](https://codesandbox.io/embed/serene-dewdney-g3rnqg?fontsize=14&hidenavigation=1&theme=dark)
    
    
 この問題は入力フォームに入力して `setName` が呼ばれ state が更新されるたびに `<SuperSlowComponent>` が再レンダリングされるため発生しています。まさに不要な再レンダリングによって引き起こされた問題と言えます。この問題を解決する方法をいくつか見ていきます。
@@ -106,7 +106,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/modest-gianmarco-ll3b9g?fontsize=14&hidenavigation=1&theme=dark)
+[でも](https://codesandbox.io/embed/modest-gianmarco-ll3b9g?fontsize=14&hidenavigation=1&theme=dark)
 
 ## リフトアップパターン
 
@@ -148,7 +148,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/agitated-poincare-qve67s?fontsize=14&hidenavigation=1&theme=dark)
+[デモ](https://codesandbox.io/embed/agitated-poincare-qve67s?fontsize=14&hidenavigation=1&theme=dark)
    
 しかしこの方法ですとまたもやユーザーが入力フィールドへ入力するたびに、非常に遅いコンポーネントが再レンダリングされてしまいます。いったん `useState` は `<App />` で呼び出さす `<Form />` コンポーネントで管理するように戻しておきましょう。
 
@@ -189,7 +189,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/loving-kalam-p55qq8?fontsize=14&hidenavigation=1&theme=dark)
+[デモ](https://codesandbox.io/embed/loving-kalam-p55qq8?fontsize=14&hidenavigation=1&theme=dark)
 
 リフトアップパターンの亜種として、 `children` としてコンポーネントを渡す代わりにコンポーネントを Props として渡すパターンもあります。
 
@@ -228,7 +228,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/romantic-moon-2s40lz?fontsize=14&hidenavigation=1&theme=dark)
+[デモ](https://codesandbox.io/embed/romantic-moon-2s40lz?fontsize=14&hidenavigation=1&theme=dark)
 
 ## メモ化パターン
 
@@ -269,7 +269,7 @@ export default function App() {
 }
 ```
 
-@[codesandbox](https://codesandbox.io/embed/quirky-dew-egm39t?fontsize=14&hidenavigation=1&theme=dark)
+[デモ](https://codesandbox.io/embed/quirky-dew-egm39t?fontsize=14&hidenavigation=1&theme=dark)
 
 ## 参考
 
