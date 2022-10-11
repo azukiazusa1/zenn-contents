@@ -221,7 +221,7 @@ if (isShow) {
 
 Composables とは Composition API を利用してステートフルなロジックを再利用可能な関数として定義するものです。例えば `dayjs` などの日付ライブラリは日付のフォーマットのような再利用可能な関数を提供しますが、これは**ステートレスなロジック**です。対して**ステートフルなロジック**とは時間の経過によって変化する状態の管理を含みます。
 
-例として Compositiomn API を利用して API コールを再利用可能にした `useFetch` 関数を見てみましょう。
+例として Composition API を利用して API コールを再利用可能にした `useFetch` 関数を見てみましょう。
 
 ```js
 import { Ref, ref, unref, watchEffect } from 'vue'
@@ -329,11 +329,11 @@ const useFetch = <T>(url: string | Ref<string>) => {
 const { data, loading, error } = useFetch('/api/users')
 ```
 
-## 個人的にな見解
+## 個人的な見解
 
-さて、`reactive` と `ref` どちらを使用すればよいかの話に戻りましょう。私の個人的な意見としては**コンポーネント内では常に `ref` を使する**のが良いと思います。
+さて、`reactive` と `ref` どちらを使用すればよいかの話に戻りましょう。私の個人的な意見としては**コンポーネント内では常に `ref` を使用する**のが良いと思います。
 
-理由としてはやはり `reactive` において分割代入をするとリアクティブ性が失われるという挙動によるとことが大きいです。結局 `toRefs` で `Ref` に変換する必要があるのならば元からリアクティブなデータは `ref` で定義すると決めておいたほうがデータのアクセス方法も統一されるのでわかりやすいでしょう。(`computed` も同様に `.value` でデータにアクセスします）
+理由としてはやはり `reactive` において分割代入をするとリアクティブ性が失われるという挙動によることが大きいです。結局 `toRefs` で `Ref` に変換する必要があるのならば元からリアクティブなデータは `ref` で定義すると決めておいたほうがデータのアクセス方法も統一されるのでわかりやすいでしょう。(`computed` も同様に `.value` でデータにアクセスします）
 
 `ref` において常に `.value` をつけなければいけないというわかりづらさはありますがこれは `TypeScript` を使用していれば大きな問題にはならないと考えました。（また VSCode の拡張である [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) を使用すれば `.value` を補完してくれます。
 
