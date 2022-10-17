@@ -116,7 +116,7 @@ export default component$(() => {
 
 静的な `<head>` を生成する場合には `head` オブジェクトを export します。コンポーネントを宣言する際には `component$` 関数を使用します。`component$` に付与される `$` は Qwik においてチャンク分割可能であることを示しています。（`component$` 以外にも `onClick$` や `useWatch$` など Qwik には `$` が付与されている関数が多くあります）
 
-また、`component$` 関数で宣言されたコンポーネントは常に遅延ロードされます。各モジュールにおいて `export default` されるコンポーネントについては必ず `component$` 関数を使用してコンポーネントを宣言しなければいけないのですが、それ以外のコンポーネントは `component$` 関数を使用せず通常の関数で宣言することができます。`component$` を使用しない場合は、そのコンポーネントは遅延ロードされず常に同時にロードされます。（[Lite Components](https://qwik.builder.io/docs/components/lite-components/) と呼ばれています）
+また `component$` 関数で宣言されたコンポーネントは常に遅延ロードされます。各モジュールにおいて `export default` されるコンポーネントについては必ず `component$` 関数を使用してコンポーネントを宣言しなければいけないのですが、それ以外のコンポーネントは `component$` 関数を使用せず通常の関数で宣言できます。`component$` を使用しない場合は、そのコンポーネントは遅延ロードされず常に同時にロードされます。（[Lite Components](https://qwik.builder.io/docs/components/lite-components/) と呼ばれています）
 
 それでは http://localhost:5173/about にアクセスしてみましょう。`src/pages/about/index.tsx` に作成した内容が表示されています。
 
@@ -282,7 +282,7 @@ https://qwik.builder.io/docs/advanced/optimizer#optimizer-rules
 
 #### レイアウトのネスト
 
-レイアウトはネストすることも可能です。`routes` ディレクトリ内の階層に対して `layout.tsx` 
+レイアウトはネストすることもできます。。`routes` ディレクトリ内の階層に対して `layout.tsx` 
 を作成することでさらにレイアウトを適用できます。
 
 例えば `src/routes/about/layout.tsx` を作成した場合 `/about` ページには次の順番でレイアウトが適用されます。
@@ -316,7 +316,7 @@ http://localhost:5173/about にアクセスしてみると、たしかに作成�
 
 ### `root.tsx`
 
-`root.tsx` ファイルは Next.js の `_document.tsx` や `App.tsx` のようにアプリケーション全体の設定を行えます。例えばグローバル CSS を読み込んだり `<head>` の設定を行うために利用されます。
+`root.tsx` ファイルは Next.js の `_document.tsx` や `App.tsx` のようにアプリケーション全体の設定を行えます。例えばグローバル CSS を読み込んだり `<head>` の設定をするために利用されます。
 
 ```tsx:src/root.tsx
 import { component$ } from '@builder.io/qwik';
@@ -444,7 +444,7 @@ API のエンドポイントは `https://{サービスドメイン名}.microcms.
 
 リクエストヘッダーには `X-MICROCMS-API-KEY: {API キー}` を認証情報として含める必要があります。共通のヘッダーを `requestInit` そして設定します。
 
-`getPostList` と `getPost` はそれぞれ記事の一覧の取得、特定のコンテンツの取得を行う関数です。特定のコンテンツを取得するためにはコンテンツの ID を使用するので、`getPost` 関数の引数で `id` を受け取るようにしています。
+`getPostList` と `getPost` はそれぞれ記事の一覧の取得、特定のコンテンツを取得する関数です。特定のコンテンツを取得するためにはコンテンツの ID を使用するので、`getPost` 関数の引数で `id` を受け取るようにしています。
 
 ## 記事一覧の取得
 
@@ -457,7 +457,7 @@ microCMS のセットアップが完了したので、早速トップ画面で�
 
 `GET` メソッドでルートが呼び出された場合には `onGet` 関数が、`Post` メソッドでルートが呼び出された場合には `onPost` 関数がそれぞれ呼ばれます。`onRequest` 関数はすべてのリクエストメソッドに対応しており、フォールバックとして使用できます。
 
-また、これらのリクエストハンドラ関数はページコンポーネントやレイアウトコンポーネントなど `pages` ディレクトリ配下のみで利用できます。
+またこれらのリクエストハンドラ関数はページコンポーネントやレイアウトコンポーネントなど `pages` ディレクトリ配下のみで利用できます。
 
 記事一覧ページにおいては、以下のように `onGet` 関数を実装して export します。
 
@@ -770,7 +770,7 @@ Environment Variables には `.env` に設定した値を設定します。
 
 ![スクリーンショット 2022-10-16 13.07.55](//images.ctfassets.net/in6v9lxmm5c8/7IZlue6qm205oAaZECs51f/955713ff665f85fb769b98ca1b39366a/____________________________2022-10-16_13.07.55.png)
 
-設定が完了したら「Deploy」ボタンでデプロイを実行します
+設定が完了したら「Deploy」ボタンでデプロイを実行します。
 
 以下の画面が表示されていればデプロイは成功しています。
 
