@@ -210,7 +210,7 @@ button {
 
 ### `layouts.tsx`
 
-`src/ruotes` 配下に存在する `layouts.tsx` ファイルも特別な意味を持つファイルです。`laytouts.tsx` はページ間で再利用されるナビゲーションバーやフッターをレイアウトとして提供します。デフォルトの `layout.tsx` は次のようになっています。
+`src/routes` 配下に存在する `layouts.tsx` ファイルも特別な意味を持つファイルです。`layouts.tsx` はページ間で再利用されるナビゲーションバーやフッターをレイアウトとして提供します。デフォルトの `layout.tsx` は次のようになっています。
 
 ```tsx:src/routes/layouts.tsx
 import { component$, Slot } from '@builder.io/qwik';
