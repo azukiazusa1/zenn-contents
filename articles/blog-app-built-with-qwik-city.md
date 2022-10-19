@@ -776,6 +776,6 @@ Environment Variables には `.env` に設定した値を設定します。
 
 ![スクリーンショット 2022-10-16 13.33.56](//images.ctfassets.net/in6v9lxmm5c8/4NwBYZhDDts3bbvysSfoBa/53f43d501063ecdab9c593e8d8c9a9a4/____________________________2022-10-16_13.33.56.png)
 
-デプロイすたアプリケーションを確認してみましょう！
+デプロイしたアプリケーションを確認してみましょう！
 
 https://qwik-city-blog-app.vercel.app/
