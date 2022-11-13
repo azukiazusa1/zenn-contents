@@ -1,5 +1,5 @@
 ---
-title: "React Router の　defer で重要でないデータの取得を遅延させる"
+title: "React Router の defer で重要でないデータの取得を遅延させる"
 emoji: "🐢"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [react, reactrouter]
