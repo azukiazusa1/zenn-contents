@@ -154,7 +154,7 @@ const Comments: React.FC = () => {
 };
 ```
 
-それでは試してみましょう。目論見通り、1秒経過したタイミングで記事のコンテンツが表示されていることがわかります。記事のコンテンツが表示されたタイミングではコメントの取得は完了していないので「Loading Comments...」と表示されます。
+それでは試してみましょう。目論見通り、1 秒経過したタイミングで記事のコンテンツが表示されていることがわかります。記事のコンテンツが表示されたタイミングではコメントの取得は完了していないので「Loading Comments...」と表示されます。
 
 ![fetc-article-2](//images.ctfassets.net/in6v9lxmm5c8/EzLOvr2Mbq6FOwNQV3IRs/bfb709afe7e7f4629cd970a0d109fbd5/fetc-article-2.gif)
 
