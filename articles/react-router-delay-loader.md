@@ -189,7 +189,7 @@ type LoaderData = {
 
 `defer` 関数は、解決された値の代わりにプロミスを渡すことで、`loader` から返される値を遅延させることができます。ここで注目すべき点は、`fetchArticle` 関数には `await` キーワードを付与しているけれど、`fetchComments` 関数には `await` キーワードを付与していない点です。React Router により `await` キーワードを付与するかどうかで自動的に遅延させるかどうか決定させることができます。
 
-遅延したデータを利用するには React Router の提供する [`<Await>`](https://reactrouter.com/en/main/components/await) コンポーネントを利用します。遅延された値は `resolve` Props としてコンポーネントに渡します。`<Await>` コンポーネントの `children` は関数となっており、Promise が解決した時その値が引数として渡されます。Promise が reject された場合には `errorElement` Props の内容を描画します。
+遅延したデータを利用するには React Router の提供する [`<Await>`](https://reactrouter.com/en/main/components/await) コンポーネントを利用します。遅延された値は `resolve` Props としてコンポーネントに渡します。`<Await>` コンポーネントの `children` は関数となっており、Promise が解決したときその値が引数として渡されます。Promise が reject された場合には `errorElement` Props の内容を描画します。
 
 また`<Await>` コンポーネントは Promise が解決されていない場合には Promise を throw するように設計されています。つまり、`<Suspense>` コンポーネントで囲って使用できるということです。
 
