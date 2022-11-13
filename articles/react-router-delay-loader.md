@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
 ]);
 ```
 
-ここでは `fetchArticle` 関数と `fetchComments` 関数で API をコールしており、それぞれの関数が解決するまで `await` で待機してからレンダリングを開始することになります。`fetchArticle` 関数と `fetchComments` 関数はそれぞれ擬似的にデータの取得が完了するまで1秒と3秒かかるように設定しています。
+ここでは `fetchArticle` 関数と `fetchComments` 関数で API をコールしており、それぞれの関数が解決するまで `await` で待機してからレンダリングを開始することになります。`fetchArticle` 関数と `fetchComments` 関数はそれぞれ擬似的にデータの取得が完了するまで 1 秒と 3 秒かかるように設定しています。
 
 それでは実際に試して確認してみましょう。`loader` 関数により `fetchArticle` と `fetchComments` のそれぞれの解決を待つ必要があるので、リンクをクリックしてからページ遷移が完了するまで3秒かかります。
 
