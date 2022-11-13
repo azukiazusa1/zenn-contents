@@ -124,7 +124,7 @@ export const router = createBrowserRouter([
   };
 ```
 
-`loader` 関数でコメントの取得をしなくなった代わりにどこか別の方法でコメントを取得する必要があります。ここでは使い古されたパターンを利用しましょう。`<Comments />`コンポーネントの `useEffect` でデータを取得します。
+`loader` 関数でコメントの取得をしなくなった代わりにどこか別の方法でコメントを取得する必要があります。ここでは使い古されたパターンを利用しましょう。`<Comments />` コンポーネントの `useEffect` でデータを取得します。
 
 ```tsx
 const Comments: React.FC = () => {
