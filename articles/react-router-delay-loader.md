@@ -168,7 +168,7 @@ const Comments: React.FC = () => {
 
 この方法はうまくいっているように思えますが、1 つ問題が生じています。それはコメントの取得は `<ArticlePage />` コンポーネントがレンダリングされた後でないと始まらないことです。つまり、ユーザーはページ遷移を開始してから 4 秒待たなければコメントを閲覧できないということになります。
 
-これは `useEffetc` が発火するのはコンポーネントがマウントされるタイミングであることに起因しています。`loader` 関数内でコメントを取得していたときには、コンポーネントの外でデータの取得をしていたため早いタイミングからデータの取得を開始できていました。しかし、`<Comments>` コンポーネント内の `useEffet` でデータを取得するようになったために、記事の取得が完了し `<ArticlePage>` コンポーネントがレンダリングされなければコメントのデータの取得を開始できなくなってしまいました。
+これは `useEffect` が発火するのはコンポーネントがマウントされるタイミングであることに起因しています。`loader` 関数内でコメントを取得していたときには、コンポーネントの外でデータの取得をしていたため早いタイミングからデータの取得を開始できていました。しかし、`<Comments>` コンポーネント内の `useEffet` でデータを取得するようになったために、記事の取得が完了し `<ArticlePage>` コンポーネントがレンダリングされなければコメントのデータの取得を開始できなくなってしまいました。
 
 これは [Fetch-on-Render](https://17.reactjs.org/docs/concurrent-mode-suspense.html#approach-1-fetch-on-render-not-using-suspense) と呼ばれるアプローチで、データの取得を開始するまでの他のデータの取得の完了を待たなければいけない問題は「waterfall」と呼ばれています。
 
@@ -197,7 +197,7 @@ type LoaderData = {
 
 遅延したデータを利用するには React Router の提供する [`<Await>`](https://reactrouter.com/en/main/components/await) コンポーネントを利用します。遅延された値は `resolve` Props としてコンポーネントに渡します。`<Await>` コンポーネントの `children` は関数となっており、Promise が解決したときその値が引数として渡されます。Promise が reject された場合には `errorElement` Props の内容を描画します。
 
-また`<Await>` コンポーネントは Promise が解決されていない場合には Promise を throw するように設計されています。つまり、`<Suspense>` コンポーネントで囲って使用できるということです。
+また `<Await>` コンポーネントは Promise が解決されていない場合には Promise を throw するように設計されています。つまり、`<Suspense>` コンポーネントで囲って使用できるということです。
 
  ```tsx:src/pages/Article.tsx
  const Comments: React.FC = () => {
