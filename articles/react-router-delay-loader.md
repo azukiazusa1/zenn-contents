@@ -66,7 +66,7 @@ const Comments: React.FC = () => {
 
 はじめに `loader` 関数を定義して export しています。`loader` 関数は各ルートがレンダリングされる前に呼び出され、`return` したデータはルートのコンポーネント内で `useLoaderData` フックから利用できます。つまり、`loader` 関数によりレンダリングが開始する間に API をコールでき、データの取得が完了したタイミングでレンダリングを開始できるようになります。
 
-作成した `loader` 関数は以下のように [createbrowserRouter](https://reactrouter.com/en/main/routers/create-browser-router) でルーティングを定義する際に `loader` ｐる
+作成した `loader` 関数は以下のように [createbrowserRouter](https://reactrouter.com/en/main/routers/create-browser-router) でルーティングを定義する際に `loader` プロパティとして渡します。
 
 ```tsx:src/router.tsx
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
