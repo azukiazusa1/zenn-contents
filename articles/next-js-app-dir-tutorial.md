@@ -594,8 +594,269 @@ http://localhost:3000 にアクセスすると、次のように記事の一覧�
 
 ## 記事の詳細ページ
 
+記事の詳細ページを作成します。ここでは記事の本文を取得して表示するとともに、記事に対するコメントを表示する機能を実装します。特定の記事は `api/articles/{slug}` から、記事に対するコメントは `api/articles/{slug}/comments` から取得します。
+
+それぞれのキャッシュ戦略も考えてみましょう。記事の本文は、更新頻度が高くないと想定できるので、一定期間キャッシュしておくことができます。キャッシュの生存期間は `fetch` のオプションに `next.revalidate` を指定することで設定できます。これは従来の ISR に匹敵する機能と言えるでしょう。
+
+`revalidate` は `fetch` のオプションとして渡すだけでなく、ルート単位の設定もできます。ルート単位で設定するには `page` または `layout` ファイルで以下のように記述します。
+
+```tsx
+export const revalidate = 60
+```
+
+一方で、コメントは投稿した後に即座に反映されないと不自然ですので、キャッシュを利用しないほうが良いでしょう。
+
+```tsx:app/pages/articles/[slug].tsx
+import { notFound } from "next/navigation";
+import { Article, Comment } from "../../types";
+
+const getArticle = async (slug: string) => {
+  const res = await fetch(`http://localhost:3000/api/articles/${slug}`, {
+    next: { revalidate: 60 },
+  });
+
+  if (res.status === 404) {
+    // notFound 関数を呼び出すと not-fount.tsx を表示する
+    notFound();
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch article");
+  }
+
+  const data = await res.json();
+  return data as Article;
+};
+
+const getComments = async (slug: string) => {
+  const res = await fetch(
+    `http://localhost:3000/api/articles/${slug}/comments`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch comments");
+  }
+
+  const data = await res.json();
+  return data.comments as Comment[];
+};
+```
+
+記事を取得する際に API が 404 を返した場合は `notFoutd` 関数を呼び出しています。この関数が呼ばれると同じディレクトリにある `not-found.tsx` が表示されます。
+
+`not-found.tsx` も作成しておきましょう。
+
+```tsx:app/pages/articles/not-found.tsx
+import { Heading, Button } from "../../common/components";
+import NextLink from "next/link";
+
+export default function NotFound() {
+  return (
+    <div>
+      <Heading mb={4}>お探しの記事が見つかりませんでした。</Heading>
+      <Button as={NextLink} href="/">
+        トップへ戻る
+      </Button>
+    </div>
+  );
+}
+```
+
+記事の詳細の表示に戻りましょう。コンポーネント内で `getArticle` と `getComments` を呼び出して、取得したデータを表示します。依存関係のない複数の API を呼び出す場合は処理が並列になるように `Promise.all` を使うことが推奨されます。
+
+
+```tsx:app/pages/articles/[slug].tsx
+export default async function ArticleDetail({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const articlePromise = getArticle(params.slug);
+  const commentsPromise = getComments(params.slug);
+
+  const [article, comments] = await Promise.all([
+    articlePromise,
+    commentsPromise,
+  ]);
+
+  return (
+    <div>
+      <h1>{article.title}</h1>
+      <p>{article.content}</p>
+      <h2>Comments</h2>
+      <ul>
+        {comments.map((comment) => (
+          <li key={comment.id}>{comment.body}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+これで記事詳細ページを訪れると、記事の内容とコメントの一覧が表示されるようになりました。しかし 1 点問題があります。記事の表示に時間がかかりすぎる点です。
+
+記事の取得には 1000 ミリ秒、コメントの一覧には 3000 ミリ秒の遅延を設定しています。記事の本文を閲覧するだけであれば本来は 1000 ミリ秒で表示できるはずです。しかし、`Promise.all` でコメント一覧の取得の完了も同時に待機しているため、記事の内容の表示に 3000 ミリ秒かかってしまっています。
+
+![記事の詳細を表示するまでローディングインジケータが表示されている](https://storage.googleapis.com/zenn-user-upload/4d5e801a532a-20230114.gif)
+
+ユーザーが記事詳細ページを訪れる目的は記事の本文を閲覧することであり、コメントの一覧はあくまで補足情報です。そのため、コメントの一覧の取得の完了まで待つのは好ましくありません。
+
+そこでコメント一覧の取得にストリーミングを使ってみましょう。ストリーミングを使うと、コメントの一覧の取得が完了するまで待つことなく、記事の本文を表示できます。
+
+### コメントをストリーミングで取得する
+
+ストリーミングはページの HTML を小さなチャンク部分解してクライアントに漸進的に送信します。これにより、すべてのデータの取得が完了するまで待つことなく、ページの一部分から表示を開始できます。
+
+ストリーミングを行う箇所を制御するためには [<Suspense>](https://beta.reactjs.org/reference/react/Suspense) で非同期コンポーネントをラップします。次のようにコメント一覧を取得する箇所を別のコンポーネントに分割し、`<Suspense>` でラップします。
+
+```tsx:app/pages/articles/[slug].tsx
+export default async function ArticleDetail({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const articlePromise = getArticle(params.slug);
+  const commentPromise = getComments(params.slug);
+
+  const article = await articlePromise;
+
+  return (
+    <div>
+      <h1>{article.title}</h1>
+      <p>{article.content}</p>
+      <h2>Comments</h2>
+      <Suspense fallback={<div>Loading comments...</div>}>
+        {/* @ts-expect-error 現状は jsx が Promise を返すと TypeScript が型エラーを報告するが、将来的には解決される */}
+        <Comments commentPromise={commentPromise} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function Comments({
+  commentPromise,
+}: {
+  commentPromise: Promise<Comment[]>;
+}) {
+  const comments = await commentPromise;
+  return (
+    <ul>
+      {comments.map((comment) => (
+        <li key={comment.id}>{comment.content}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+それでは動作を確認してみましょう。1000 ミリ秒経過した後に記事の本文が表示され、その間コメント一覧には `Loading comments` と表示されています。その後さらに 2000 ミリ秒経過した後にコメントの一覧が表示されます。
+
+![コメント一覧をストリーミングで取得している](https://storage.googleapis.com/zenn-user-upload/b091e1508dbb-20230114.gif)
+
+### `<head>` タグ
+
+記事の詳細ページでは SEO のためにも `<head>` タグに `<title>` タグを設定しておきたいものです。ルーツごとに `<head>` タグを設定するには、`head.tsx` という特殊なファイルを配置します。
+
+`Head` コンポーネント内では以下のタグを使用できます。
+
+- `<title>`
+- `<meta>`
+- `<link>`
+- `<script>`
+
+ヘッダコンポーネントはサーバーコンポーネントと同様に `async/await` を使って動的に値を取得して設定できます。
+
+```tsx:app/pages/head.tsx
+import { Article } from "../../types";
+
+const getArticle = async (slug: string) => {
+  const res = await fetch(`http://localhost:3000/api/articles/${slug}`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch article");
+  }
+
+  const data = await res.json();
+  return data as Article;
+};
+
+export default async function Head({ params }: { params: { slug: string } }) {
+  const article = await getArticle(params.slug);
+  return (
+    <>
+      <title>{article.title}</title>
+      <meta name="description" content={article.content} />
+    </>
+  );
+}
+```
+
+Head コンポーネントを使用する際に、上位のディレクトリの `head.tsx` ファイルの内容を自動的に引き継がないことに注意してください。
+
+例えば `app/head.tsx` では以下のように記述されています。
+
+```tsx:app/head.tsx
+export default function Head() {
+  return (
+    <>
+      <title>Create Next App</title>
+      <meta content="width=device-width, initial-scale=1" name="viewport" />
+      <meta name="description" content="Generated by create next app" />
+      <link rel="icon" href="/favicon.ico" />
+    </>
+  )
+}
+```
+
+ファビコンや viewport の設定は全てのページで共通なので、下位のディレクトリで設定しなくても引き継いでほしいのですが、一番近い箇所にある `head.tsx` ファイルですべて上書きされるようになっています。
+
+そのため記事詳細ページでは `<title>` と `<meta name="description">` のみが存在することになってしまいます。
+
+このような場合には共通のコンポーネント作成する方法が紹介されています。まずは `app/DefaultTags` ファイルを作成します。ここには全ページで共通の `<head>` を設定します。
+
+```tsx:app/DefaultTags.tsx
+export default function DefaultTags() {
+  return (
+    <>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link href="/favicon.ico" rel="shortcut icon" />
+    </>
+  );
+}
+```
+
+そして、各ページの `head.tsx` では `DefaultTags` をインポートして `<head>` に追加します。
+
+```tsx:app/pages/head.tsx
++ import DefaultTags from "../../DefaultTags";
+
+  export default async function Head({ params }: { params: { slug: string } }) {
+    const article = await getArticle(params.slug);
+    return (
+      <>
+        <title>{article.title}</title>
+        <meta name="description" content={article.content} />
++       <DefaultTags />
+      </>
+    );
+  }
+```
+
+### スタイリング
+
+## 記事の作成
+
+## まとめ
+
 
 
 ## 参考
 
+- [Getting Started | Next.js](https://beta.nextjs.org/docs/getting-started)
 - [React Server Componentsの仕組み：詳細ガイド | POSTD](https://postd.cc/how-react-server-components-work/)
