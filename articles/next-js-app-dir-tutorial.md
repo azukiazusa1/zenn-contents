@@ -220,15 +220,20 @@ export default function Provider({ children }: { children: React.ReactNode }) {
 
 これでコンパイルエラーが解消され、Next.js アプリケーションが正常に起動するようになりました。
 
+`<ChakraProvider>` と同様に Chakra UI のコンポーネントはすべて Client でのみ動作するため、ラップして `"use client"` を宣言する必要があります。
+
+Chakra UI のコンポーネントを使うたびに `"use client"` を宣言するのは手間ですので、`app/common/components/index.tsx` でまとめて Chatra UI のコンポーネントを export するようにします。
+
+```tsx:app/common/components/index.tsx
+"use client";
+export * from "@chakra-ui/react";
+```
+
 ### ヘッダーコンポーネントの作成
 
 それでは Chakra UI を利用してヘッダーを作りましょう。`app` ディレクトリでは従来の `page` ディレクトリと異なり、`page.tsx` のような特殊なファイル名を使わない限り自由にファイルを配置できますので、`app` ディレクトリ配下に `Header.tsx` を作成します。
-
-Chakra UI のコンポーネントはすべて Client でのみ動作するため、`"use client"` を宣言する必要があります。
-
 ```tsx:app/Header.tsx
-"use client";
-import { Box, Flex, Heading, Button } from "@chakra-ui/react";
+import { Box, Flex, Heading, Button } from "./common/components";
 import NextLink from "next/link";
 
 export default function Header() {
@@ -272,16 +277,15 @@ export default function Header() {
 同様に、`app/Main.tsx` と `app/Footer.tsx` も作成します。
 
 ```tsx:app/Main.tsx
-"use client";
-import { Container } from "@chakra-ui/react";
+import { Container } from "./common/components";
 
 export default function Main({ children }: { children: React.ReactNode }) {
   return (
     <Container
       as="main"
       maxW="container.lg"
-      mt="4"
-      minH="calc(100vh - 115px - 1rem)"
+      my="4"
+      minH="calc(100vh - 115px - 2rem)"
     >
       {children}
     </Container>
@@ -290,9 +294,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
 ```
 
 ```tsx:app/Footer.tsx
-"use client";
-
-import { Container, Box, Text } from "@chakra-ui/react";
+import { Container, Box, Text } from "./common/components";
 
 export default function Footer() {
   return (
@@ -338,9 +340,259 @@ export default function Footer() {
 
 ![Chakra UI を適用した後のレイアウト](https://storage.googleapis.com/zenn-user-upload/ef82b2d3c41e-20230114.png)
 
-
 ## 記事の一覧を表示する
 
+API から記事の一覧を取得してトップページに表示してみましょう。API はあらかじめ `pages/api/` ディレクトリに用意されています。
+
+従来の Next.js で提供されていた `getServerSideProps` や `getStaticPorps` は `app` ディレクトリではサポートされていません。その代わりに API からのデータを取得は、サーバーコンポーネント内で `async/await` を使って行います。
+
+`app` ディレクトリによるデータフェッチングは基本的に Fetch API を使用します。Fetch API は Web API にネイティブで備わっている機能ですが、Next.js で使う際には次のように拡張されています。
+
+- 自動的にリクエストの重複排除する
+- デフォルトで動的関数の前に呼ばれるリクエストがキャッシュされる
+- 独自のキャッシュ戦略として `revalidate` をサポートする
+
+クライアントコンポーネントでもデータフェッチングを行うことができますが、常にサーバーコンポーネント内で行うことを推奨されています。
+- データベースなどバックエンドのリソースに直接アクセスできる
+- アクセストークンなどの機密情報をクライアントに露出しない
+- データの取得とレンダリングを同一環境下で行うのでクライアントとサーバーの通信と、クライアント上のメインスレッドの作業を削減できる
+- 複数のデータフェッチングを 1 つのリクエストで行うことができる
+- データソースにより近い場所でデータを取得することで、レイテンシを削減できる
+
+それでは実際に Server Component でデータフェッチングを行ってみましょう。先に型定義を用意しておきます。
+
+```ts:app/types.ts
+export type Article = {
+  id: number;
+  title: string;
+  content: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type Comment = {
+  id: number;
+  body: string;
+  articleId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+`app/pages.tsx` 内で `api/articles` から記事の一覧を取得します。
+
+```tsx:app/pages.tsx
+import type { Article } from "./types";
+
+async function getArticles() {
+  const res = await fetch("http://localhost:3000/api/articles");
+
+  // エラーハンドリングを行うことが推奨されている
+  if (!res.ok) {
+    throw new Error("Failed to fetch articles");
+  }
+
+  const data = await res.json();
+  return data.articles as Article[];
+}
+
+export default async function Home() {
+  const articles = await getArticles();
+
+  return (
+    <div>
+      <h1>新着記事</h1>
+      <ul>
+        {articles.map((article) => (
+          <li key={article.id}>{article.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+上記のようにコンポーネントで `async/await` を使用することで自然にデータを取得して使用できます。
+
+### データのキャッシュ
+
+データフェッチングのキャッシュについても考えてみましょう。デフォルトでは `fetch` を使用すると自動的にデータを取得した後にキャッシュされます。これは `fetch` のオプションはデフォルトで `{ cache: "force-cache" }` が設定されていることを意味します。
+
+ここでは、新着の記事の一覧を取得しているので、データの更新が頻繁に行われる可能性があります。そのため、データのキャシュは行わないように設定します。
+
+`fetch` を実行するたびに新しいデータを取得するようにするには、`cache: "no-source"` を設定します。
+
+```tsx:app/pages.tsx
+const res = await fetch("http://localhost:3000/api/articles", {
+  cache: "no-store",
+});
+```
+
+## ローディング UI
+
+新着記事一覧を取得に 1500 ミリ秒かかるようにディレイを設定しているのですが、その間データの取得と関係のないヘッダー部分も含めて何も表示されないのはユーザーフレンドリーではありません。そこで、データの取得中にローディング UI を表示するようにしてみましょう。
+
+Next.js 13 では `app` ディレクトリ内の `loading.tsx` という特殊なファイルがローディング UI を表示する役割を果たします。`loading.tsx` はサーバーでデータを取得している最中（= サーバーコンポーネントの Promise が解決するまで）に表示され、レンダリングが完了すると新しいコンテンツを表示します。この挙動は [Suspense](https://ja.reactjs.org/docs/concurrent-mode-suspense.html) における `fallback` と同じです。
+
+```tsx:app/loading.tsx
+import { Box, Spinner } from "./common/components";
+
+export default function Loading() {
+  return (
+    <Box justifyContent="center" display="flex">
+      <Spinner color="orange.400" size="xl" />
+    </Box>
+  );
+}
+```
+
+`loading.tsx` により、記事の一覧を取得するまでローディング UI が表示されるようになりました。`loading.tsx` は同じディレクトリ内の `page.tsx` をラップするように配置するので、ヘッダーなどのレイアウトは即座に表示されます。
+
+![ローディング UI が表示されている](https://storage.googleapis.com/zenn-user-upload/73b6008a650f-20230114.gif)
+
+### エラーハンドリング
+
+サーバーコンポーネント内で例外が throw された場合、`error.tsx` の内容が表示されます。`error.tsx` は同じディレクトリ内にある `page.tsx` ファイルを [Error Boundary](https://reactjs.org/docs/error-boundaries.html) でラップします。`error.tsx` は必ず Client Component として扱われます。
+
+Error コンポーネントは以下の Props を受け取ります。
+- `error`：例外オブジェクト
+- `reset`：例外が発生したコンポーネントを再レンダリングするための関数
+
+```tsx:app/error.tsx
+"use client"; // Error components must be Client components
+
+import { useEffect } from "react";
+import { Heading, Button } from "./common/components";
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <div>
+      <Heading mb={4}>予期せぬエラーが発生しました。</Heading>
+      <Button onClick={() => reset()}>Try again</Button>
+    </div>
+  );
+}
+```
+
+`app.page.tsx` で意図的に例外を発生させることで、エラーハンドリングの動作を確認してみましょう。
+
+```diff tsx:app/page.tsx
+  async function getArticles() {
+    const res = await fetch("http://localhost:3000/api/articles", {
+      cache: "no-store",
+    });
+
++   throw new Error("Failed to fetch articles");
+```
+
+![エラーが発生した場合の UI](https://storage.googleapis.com/zenn-user-upload/50db0d25ddec-20230114.png)
+
+### ArticleList コンポーネント
+
+最後に記事の表示を担当するコンポーネントを作成して見た目を整えましょう。う。まずは `ArticleCard` コンポーネントを作成します。
+
+```tsx:app/components/ArticleCard.tsx
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Heading,
+  Text,
+} from "./common/components";
+import NextLink from "next/link";
+import { Article } from "./types";
+
+export default function ArticleCard({ article }: { article: Article }) {
+  const formattedDate = new Date(article.createdAt).toLocaleDateString(
+    "ja-JP",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+  return (
+    <Card
+      as={"li"}
+      _hover={{
+        boxShadow: "xl",
+      }}
+    >
+      <NextLink href={`/articles/${article.slug}`}>
+        <CardHeader>
+          <Heading size="md">{article.title}</Heading>
+        </CardHeader>
+        <CardBody>
+          <Text>{article.content.substring(0, 200)}...</Text>
+        </CardBody>
+        <CardFooter>
+          <Text fontSize="sm" color="gray.600">
+            {formattedDate}
+          </Text>
+        </CardFooter>
+      </NextLink>
+    </Card>
+  );
+}
+```
+
+記事のカードを一覧で表示するために、`ArticleList` コンポーネントを作成します。
+
+```tsx:app/components/ArticleList.tsx
+import { VStack } from "./common/components";
+import ArticleCard from "./ArticleCard";
+import { Article } from "./types";
+
+export default function ArticleList({ articles }: { articles: Article[] }) {
+  return (
+    <VStack spacing={4} as="ul">
+      {articles.map((article) => (
+        <ArticleCard key={article.id} article={article} />
+      ))}
+    </VStack>
+  );
+}
+```
+
+`ArticleList` コンポーネントを `app/page.tsx` に組み込みます。
+
+```tsx:app/page.tsx
+import ArticleList from "./ArticleList";
+import { Heading } from "./common/components";
+
+// ...
+
+export default async function Home() {
+  const articles = await getArticles();
+
+  return (
+    <div>
+      <Heading as="h1" mb={4}>
+        新着記事
+      </Heading>
+      <ArticleList articles={articles} />
+    </div>
+  );
+}
+```
+
+http://localhost:3000 にアクセスすると、次のように記事の一覧が表示されるはずです。
+
+![ArticleList コンポーネントにより描画された記事一覧ページ](https://storage.googleapis.com/zenn-user-upload/2dc15fda846f-20230114.png)
+
+## 記事の詳細ページ
 
 
 
