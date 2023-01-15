@@ -128,7 +128,7 @@ Hello, world!
   # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
   
   [dependencies]
-+ yew = { git = "https://github.com/yewstack/yew/" }
++ yew = "0.19.3"
 ```
 
 続いて `main.rs` ファイルを編集します。
