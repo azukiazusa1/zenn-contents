@@ -273,7 +273,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
 
 Chakra UI のコンポーネントはすべて `<ChakraProvider>` に依存しているため、Client Component でのみ動作します。そのため UI コンポーネントを使用する場合にはラップして `"use client"` を宣言する必要があります。
 
-Chakra UI のコンポーネントを使うたびに `"use client"` を宣言するのは手間がかかります。`app/common/components/index.tsx` でまとめて Chatra UI のコンポーネントを export して Cliemt Component として使えるようにします。
+Chakra UI のコンポーネントを使うたびに `"use client"` を宣言するのは手間がかかります。`app/common/components/index.tsx` でまとめて Chatra UI のコンポーネントを export して Client Component として使えるようにします。
 
 ```tsx:app/common/components/index.tsx
 "use client";
