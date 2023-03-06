@@ -776,6 +776,7 @@ export default function NotFound() {
       </Button>
     </div>
   );
+}
 ```
 
 存在しない記事の URL にアクセスすると、以下のように表示されます。
