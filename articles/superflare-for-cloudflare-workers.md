@@ -2,7 +2,7 @@
 title: "Cloudflare Workers のためのフルスタックツールキット Superflare を試してみた"
 emoji: "🔧"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["cloudflareworkers", "superflare", "clodflare"]
+topics: ["cloudflareworkers", "superflare", "cloudflare"]
 published: true
 ---
 
