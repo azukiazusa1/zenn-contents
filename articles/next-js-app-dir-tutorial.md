@@ -6,18 +6,14 @@ topics: [nextjs,react,chakraui]
 published: true
 ---
 
-:::message alert
-Next.js 13 の `app` directory は 2023 年 1 月 13 日現在ベータ版の機能です。本記事の内容は変更される可能性があります。
-:::
+Next.js 13 から新たに App Router と呼ばれる機能が追加されました。これは従来の `pages` ディレクトリとは異なるレイアウトシステムです。App Router には以下のような特徴があります。
 
-Next.js 13 から新たに `app` directory という機能が追加されました。これは従来の `pages` ディレクトリとは異なるレイアウトシステムです。`app` ディレクトリには以下のような特徴があります。
-
-- ルーティング：`pages` ディレクトリではページのルーティングはファイル名によって決まっていました。例えば `pages/about.js` というファイルは `/about` というパスに対応します。`app` ディレクトリではルーティングに対応するファイルは `page.js` という固定の名前になります。`/about` というパスに対応するファイルは `app/about/page.js` という名前になるのです。`page.js` 以外にも共通されたレイアウトを担当する `layout.js`、ローディング UI を表示する `loading.js` などさまざまな特殊なファイルが存在します。
-- レンダリング：`app` ディレクトリ内のコンポーネントはデフォルトで Server Component として扱われます。Client Component として扱いたい場合には `"use client"` をファイルの先頭で宣言する必要があります。
-- データフェッチング：従来の `getStaticProps` や `getServerSideProps` は `app` ディレクトリでは使えません。代わりに Server Component で `async/await` を使用してデータを取得できます。またデータの取得時にキャッシュやリクエストの重複排除を活用するため `fetch` API を利用します。
+- ルーティング：`pages` ディレクトリではページのルーティングはファイル名によって決まっていました。例えば `pages/about.js` というファイルは `/about` というパスに対応します。App Router ではルーティングに対応するファイルは `page.js` という固定の名前になります。`/about` というパスに対応するファイルは `app/about/page.js` という名前になるのです。`page.js` 以外にも共通されたレイアウトを担当する `layout.js`、ローディング UI を表示する `loading.js` などさまざまな特殊なファイルが存在します。
+- レンダリング：App Router 内のコンポーネントはデフォルトで Server Component として扱われます。Client Component として扱いたい場合には `"use client"` をファイルの先頭で宣言する必要があります。
+- データフェッチング：従来の `getStaticProps` や `getServerSideProps` は App Router では使えません。代わりに Server Component で `async/await` を使用してデータを取得できます。またデータの取得時にキャッシュやリクエストの重複排除を活用するため `fetch` API を利用します。
 - キャッシュ：`fetch` API 用いてデータを取得する際にはデフォルトで Next.js による HTTP キャッシュが有効になっています。またクライアントサイドでのキャッシュにより、クライアントでのナビゲーションでは余分なリクエストが発生しません。
 
-`app` ディレクトリを使うことで、直感的なレイアウトシステムだけでなく、パフォーマンスの向上が見込めます。この記事では `app` directory を使って簡単な記事投稿サイトを作り、新しい機能の特徴を体験してみましょう。
+App Router を使うことで、直感的なレイアウトシステムだけでなく、パフォーマンスの向上が見込めます。この記事では `app` directory を使って簡単な記事投稿サイトを作り、新しい機能の特徴を体験してみましょう。
 
 完成後のコードは以下のリポジトリにあります。
 
@@ -34,20 +30,7 @@ git colone https://github.com/azukiazusa1/nextjs-app-dir-example.git
 自分で作成する場合は、以下のコマンドを実行してください。
 
 ```bash
-npx create-next-app@latest --experimental-app
-```
-
-`app` ディレクトリを使用するためには `next.confg.js` に `experimental: { appDir: true }` を追加する必要があります。以下のような設定となっているか確認してください。
-
-```js
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-};
-
-module.exports = nextConfig;
+npx create-next-app@latest
 ```
 
 以下のコマンドでパッケージをインストールして、開発環境を起動してみましょう。
@@ -61,9 +44,9 @@ http://localhost:3000/ にアクセスすると、以下のような画面が表
 
 ![Next.js で開発環境を起動したデフォルトで表示されるブラウザの画面](https://storage.googleapis.com/zenn-user-upload/74542e682840-20230113.png)
 
-## `app` ディレクトリの概要
+## App Router の概要
 
-まずは `app` ディレクトリに初期状態では以下のファイルが存在します。
+まずは App Router に初期状態では以下のファイルが存在します。
 
 - `page.tsx`：ルーティングに対応する UI を定義するファイル。
 - `layout.tsx`：アプリケーションのルートレイアウト。すべてのページ共通で使われるナビゲーションヘッダーなどに加えて `<html>` タグや `<body>` タグを設定する。
@@ -92,7 +75,7 @@ export default function Home() {
 
 ![app/page.tsx で変更した内容がブラウザに反映されている](https://storage.googleapis.com/zenn-user-upload/630028a2dc78-20230113.png)
 
-続いて `/articles/{slug}` というパスへアクセスしたときに、記事の詳細を表示するページを作ってみましょう。`app` ディレクトリの構造と URL のパスがマッピングされているので、`app/articles/[slug]` というディレクトリを作成します。
+続いて `/articles/{slug}` というパスへアクセスしたときに、記事の詳細を表示するページを作ってみましょう。App Router の構造と URL のパスがマッピングされているので、`app/articles/[slug]` というディレクトリを作成します。
 
 ```bash
 mkdir app/articles/[slug]
@@ -175,7 +158,7 @@ npm i @chakra-ui/react @emotion/react@^11 @emotion/styled@^11 framer-motion@^6
 
 ### Provider を設定する
 
-Chakra UI を使うためには `ChakraProvider` をアプリケーションのルートに設定する必要があります。`app` ディレクトリにおいては `app/layout.tsx` がルート要素になります。ここに `ChakraProvider` を設定してみましょう。
+Chakra UI を使うためには `ChakraProvider` をアプリケーションのルートに設定する必要があります。App Router においては `app/layout.tsx` がルート要素になります。ここに `ChakraProvider` を設定してみましょう。
 
 ```diff tsx:app/layout.tsx
   import Link from "next/link";
@@ -204,7 +187,7 @@ Chakra UI を使うためには `ChakraProvider` をアプリケーションの�
 
 ![Failed to compileと表示され、エラーメッセージが表示されている](https://storage.googleapis.com/zenn-user-upload/a100325c9817-20230114.png)
 
-これは `app` ディレクトリ内のコンポーネントがデフォルトで React Server Component として扱われることが原因です。
+これは App Router 内のコンポーネントがデフォルトで React Server Component として扱われることが原因です。
 
 ### Server Component と Client Component を使い分ける
 
@@ -221,7 +204,7 @@ Chakra UI を使うためには `ChakraProvider` をアプリケーションの�
 - `localStorage` のようなブラウザのみ利用可能な API は使えない
 - `onClick` や `onChange` のようなイベントハンドラーは使えない
 
-`useState` を利用して状態管理をする、イベントハンドラを利用してインタラクティブなアクションを行うコンポーネントは Client Component として扱う必要があります。`app` ディレクトリ内のコンポーネントを Client Component として扱うにはファイルの先頭で `"use client"` を宣言します。
+`useState` を利用して状態管理をする、イベントハンドラを利用してインタラクティブなアクションを行うコンポーネントは Client Component として扱う必要があります。App Router 内のコンポーネントを Client Component として扱うにはファイルの先頭で `"use client"` を宣言します。
 
 このように Server Component と Client Compoennt は互いに長所と短所を補い合っているため、適切に使い分ける必要があります。
 
@@ -290,7 +273,7 @@ import { Button } from "./common/components";`
 
 ### ヘッダーコンポーネントの作成
 
-それでは Chakra UI を利用して共通のヘッダーコンポーネントを作りましょう。`app` ディレクトリでは従来の `page` ディレクトリと異なり、`page.tsx` のような特殊なファイル名を使わない限り自由にファイルを配置できます。`layout.tsx` ファイルの近くにヘッダコンポーネントを配置したいので、`app` ディレクトリ配下に `Header.tsx` を作成します。
+それでは Chakra UI を利用して共通のヘッダーコンポーネントを作りましょう。App Router では従来の `page` ディレクトリと異なり、`page.tsx` のような特殊なファイル名を使わない限り自由にファイルを配置できます。`layout.tsx` ファイルの近くにヘッダコンポーネントを配置したいので、App Router 配下に `Header.tsx` を作成します。
 ```tsx:app/Header.tsx
 import { Box, Flex, Heading, Button } from "./common/components";
 import NextLink from "next/link";
@@ -403,9 +386,9 @@ export default function Footer() {
 
 API から記事の一覧を取得してトップページに表示してみましょう。API はあらかじめ `pages/api/` ディレクトリに用意されています。
 
-Next.js でデータフェッチングを行うにはサーバーサイドで行うことが一般的です。しかし、従来の Next.js で提供されていた `getServerSideProps` や `getStaticPorps` は `app` ディレクトリではサポートされていません。その代わりに API からのデータを取得は、Server Component 内で `async/await` を使って行います。Server Component では非同期コンポーネントとしても動作します。
+Next.js でデータフェッチングを行うにはサーバーサイドで行うことが一般的です。しかし、従来の Next.js で提供されていた `getServerSideProps` や `getStaticPorps` は App Router ではサポートされていません。その代わりに API からのデータを取得は、Server Component 内で `async/await` を使って行います。Server Component では非同期コンポーネントとしても動作します。
 
-`app` ディレクトリによるデータフェッチングは基本的に Fetch API を使用します。Fetch API は Web API にネイティブで備わっている機能ですが、Next.js で使う際には次のように拡張されています。
+App Router によるデータフェッチングは基本的に Fetch API を使用します。Fetch API は Web API にネイティブで備わっている機能ですが、Next.js で使う際には次のように拡張されています。
 
 - 自動的にリクエストの重複排除する
 - デフォルトで動的関数（`cookies()`, `headers()`, `useSearchParams()`）の前に呼ばれるリクエストが HTTP キャッシュされる
@@ -500,7 +483,7 @@ const res = await fetch("http://localhost:3000/api/articles", {
 
 新着記事一覧の取得には 1500 ミリ秒かかるようにディレイを設定しています。その間データの取得と関係のないヘッダー部分も含めて何も表示されないのは、ユーザーフレンドリーではありません。そこで、データの取得中にローディング UI を表示するようにしてみましょう。
 
-Next.js 13 では `app` ディレクトリ内の `loading.tsx` という特殊なファイルがローディング UI を表示する役割を果たします。`loading.tsx` はサーバーでデータを取得している最中（= サーバーコンポーネントの Promise が解決するまで）に表示され、レンダリングが完了すると新しいコンテンツを表示します。この挙動は [Suspense](https://ja.reactjs.org/docs/concurrent-mode-suspense.html) における `fallback` と同じです。
+Next.js 13 では App Router 内の `loading.tsx` という特殊なファイルがローディング UI を表示する役割を果たします。`loading.tsx` はサーバーでデータを取得している最中（= サーバーコンポーネントの Promise が解決するまで）に表示され、レンダリングが完了すると新しいコンテンツを表示します。この挙動は [Suspense](https://ja.reactjs.org/docs/concurrent-mode-suspense.html) における `fallback` と同じです。
 
 イメージとしては以下のような感じです。
 
@@ -877,97 +860,44 @@ async function Comments({
 
 ### `<head>` タグ
 
-記事の詳細ページでは SEO のためにも記事のタイトルを `<title>` タグを設定しておきたいものです。ルーティングごとに `<head>` タグを設定するには、`head.tsx` という特殊なファイルを配置します。`head.tsx` ファイルはルートレイアウトの `<head />` タグ内に挿入されます。
+記事の詳細ページでは SEO のためにも記事のタイトルを `<title>` タグを設定しておきたいものです。ルーティングごとに `<head>` タグを設定するには、`page.tsx` または `layout.tsx` ファイル内で `metadata` オブジェクトまたは `generateMetadata` 関数を名前付きエクスポートします。
+設定した `metadata` の内容は ルートレイアウトの `<head />` タグ内に挿入されます。
 
-`Head` コンポーネント内では以下のタグを使用できます。
+- `metadata` オブジェクト：`<head>` タグの内容を静的に設定する
+- `generateMetadata` 関数：`<head>` タグの内容を動的に設定する
 
-- `<title>`
-- `<meta>`
-- `<link>`
-- `<script>`
+`generateMetadata` 関数は 引数に params を受け取り、`async/await` を使って動的に値を取得して オブジェクトを形式で `<head>` を設定できます。第 2 引数の `parent` では上位のディレクトリに設定されている `metadata` を参照できます。
 
-ヘッダコンポーネントは Server Component と同様に `async/await` を使って動的に値を取得して設定できます。
+```tsx:app/pages/articles/[slug]/page.tsx
+import type { Metadata, ResolvingMetadata } from 'next';
 
-```tsx:app/pages/articles/[slug]/head.tsx
-import { Article } from "../../types";
-
-const getArticle = async (slug: string) => {
-  const res = await fetch(`http://localhost:3000/api/articles/${slug}`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    // page.tsx と異なり例外を投げても erorr.tsx に捕捉されない
-    return null;
-  }
-
-  const data = await res.json();
-  return data as Article;
-};
-
-export default async function Head({ params }: { params: { slug: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+  parent?: ResolvingMetadata;
+}): Promise<Metadata> {
   const article = await getArticle(params.slug);
-  return (
-    <>
-      <title>{article?.title}</title>
-      <meta name="description" content={article?.content} />
-    </>
-  );
+  return {
+    title: article?.title,
+    description: article?.content,
+  };
 }
 ```
 
-`app/pages/articls/[slug]/page.tsx` と同じリクエストを送信しているので一見非効率なように思えますが、Next.js により `fetch` を利用したリクエストは自動で重複排除されるのでパフォーマンスには影響しません。
+`ArticleDetail` コンポーネントと同じリクエストを送信しているので一見非効率なように思えますが、Next.js により `fetch` を利用したリクエストは自動で重複排除されるのでパフォーマンスには影響しません。
 
-Head コンポーネントを使用する際に、上位のディレクトリの `head.tsx` ファイルの内容を自動的に引き継がないことに注意してください。
+metadata はルートディレクトリに近いセグメントから最も近いセグメントにある `page.tsx` ファイルの順番に評価されます。例えば `app/layout.tsx` では以下のように記述されています。
 
-例えば `app/head.tsx` では以下のように記述されています。
-
-```tsx:app/head.tsx
-export default function Head() {
-  return (
-    <>
-      <title>Create Next App</title>
-      <meta content="width=device-width, initial-scale=1" name="viewport" />
-      <meta name="description" content="Generated by create next app" />
-      <link rel="icon" href="/favicon.ico" />
-    </>
-  )
+```tsx:app/layout.tsx
+export const metadata = {
+  title: 'Create Next App',
+  description: 'Generated by create next app',
+  themeColor: "#ffffff",
 }
 ```
 
-ファビコンや viewport の設定はすべてのページで共通なので、下位のディレクトリで設定しなくても引き継いでほしいのです。しかし実際には、一番近い箇所にある `head.tsx` ファイルですべての内容が上書きされるようになっています。
-
-そのため記事詳細ページでは `<title>` と `<meta name="description">` のみが存在することになってしまいます。
-
-このような場合には共通のコンポーネント作成する方法が紹介されています。まずは `app/DefaultTags` ファイルを作成します。ここには全ページで共通の `<head>` を設定します。
-
-```tsx:app/DefaultTags.tsx
-export default function DefaultTags() {
-  return (
-    <>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <link href="/favicon.ico" rel="shortcut icon" />
-    </>
-  );
-}
-```
-
-そして、各ページの `head.tsx` では `DefaultTags` をインポートして `<head>` に追加します。
-
-```tsx diff:app/pages/articles/[slug]/head.tsx
-+ import DefaultTags from "../../DefaultTags";
-
-  export default async function Head({ params }: { params: { slug: string } }) {
-    const article = await getArticle(params.slug);
-    return (
-      <>
-        <title>{article.title}</title>
-        <meta name="description" content={article.content} />
-+      <DefaultTags />
-      </>
-    );
-  }
-```
+`title` と `desciption` は `app/pages/articles/[slug]/page.tsx` 設定した `metadata` のキーと重複しています。この場合、最もページから近い `page.tsx` で設定された `metadata` が優先されるので、記事の詳細ページでは `title` と `description` が記事のタイトルと本文になります。また、`themeColor` は `app/layout.tsx` のみで設定されているので、その内容がそのまま引き継がれています。
 
 ### スタイリング
 
@@ -1210,7 +1140,7 @@ export default function CreateArticle() {
 
 記事のタイトルと本文を入力するフォームを表示し、作成ボタンを押すと `fetch` で記事作成 API を呼び出します。API のコールが完了したら `router.push("/")` によりトップページに遷移します。
 
-`app` ディレクトリ内で `useRouter` を使うためには `next/router` ではなく `next/navigation` をインポートする必要があります。
+App Router 内で `useRouter` を使うためには `next/router` ではなく `next/navigation` をインポートする必要があります。
 
 以下のように表示され、記事の作成もできるようになりました。
 
@@ -1264,9 +1194,9 @@ export default function CreateArticle() {
 
 ## まとめ
 
-`app` ディレクトリの基本的な動作について確認してきました。Server Component がデフォルトとなっているのが大きな特徴で、よりパフォーマンスの高いアプリケーションを作成できるのは嬉しい変更点だと思えます。
+App Router の基本的な動作について確認してきました。Server Component がデフォルトとなっているのが大きな特徴で、よりパフォーマンスの高いアプリケーションを作成できるのは嬉しい変更点だと思えます。
 
-また `app` ディレクトリではページに関連するファイルを 1 つのディレクトリ内にまとめることができるのもポイントの 1 つです。従来のファイル構成と異なるアプローチも考えられるのではないでしょうか。
+また App Router ではページに関連するファイルを 1 つのディレクトリ内にまとめることができるのもポイントの 1 つです。従来のファイル構成と異なるアプローチも考えられるのではないでしょうか。
 
 ## 参考
 
