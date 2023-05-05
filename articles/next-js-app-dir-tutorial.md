@@ -24,7 +24,7 @@ https://github.com/azukiazusa1/nextjs-app-dir-example/tree/complete
 まずは、Next.js アプリケーションを作成します。[azukiazusa1/nextjs-app-dir-example](https://github.com/azukiazusa1/nextjs-app-dir-example) のレポジトリからクローンしていただくと、バックエンドの API が準備済みの状態になっています。
 
 ```bash
-git colone https://github.com/azukiazusa1/nextjs-app-dir-example.git
+git clone https://github.com/azukiazusa1/nextjs-app-dir-example.git
 ```
 
 自分で作成する場合は、以下のコマンドを実行してください。
