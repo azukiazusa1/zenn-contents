@@ -36,7 +36,7 @@ npx create-next-app@latest
 以下のコマンドでパッケージをインストールして、開発環境を起動してみましょう。
 
 ```bash
-npm run install
+npm install
 npm run dev
 ```
 
