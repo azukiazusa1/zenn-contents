@@ -708,7 +708,7 @@ export const revalidate = 60
 
 一方で、コメントは投稿した後即座に反映されないと不自然ですので、キャッシュを利用しないほうが良いでしょう。記事の一覧取得と同様に、`fetch` のオプションに `cache: "no-store"` を指定します。
 
-```tsx:app/pages/articles/[slug].tsx
+```tsx:app/articles/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { Article, Comment } from "../../types";
 
@@ -743,7 +743,7 @@ const getComments = async (slug: string) => {
   }
 
   const data = await res.json();
-  return data.comments as Comment[];
+  return data as Comment[];
 };
 ```
 
@@ -774,7 +774,7 @@ export default function NotFound() {
 記事の詳細の表示に戻りましょう。コンポーネント内で `getArticle` と `getComments` を呼び出して、取得したデータを表示します。依存関係のない複数の API を呼び出す場合は処理が並列になるように `Promise.all` を使うことが推奨されます。
 
 
-```tsx:app/pages/articles/[slug].tsx
+```tsx:app/articles/[slug]/page.tsx
 export default async function ArticleDetail({
   params,
 }: {
@@ -819,7 +819,7 @@ export default async function ArticleDetail({
 
 ストリーミングを行う箇所を制御するためには [<Suspense>](https://beta.reactjs.org/reference/react/Suspense) で非同期コンポーネントをラップします。次のようにコメント一覧を取得する箇所を別のコンポーネントに分割し、`<Suspense>` でラップします。
 
-```tsx:app/pages/articles/[slug].tsx
+```tsx:app/articles/[slug]/page.tsx
 export default async function ArticleDetail({
   params,
 }: {
